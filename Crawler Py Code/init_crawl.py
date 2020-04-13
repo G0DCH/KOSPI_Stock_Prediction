@@ -5,10 +5,19 @@ import numpy as np
 import requests
 from io	import BytesIO
 import datetime
+import os
 
 time = datetime.date(2001,1,1)
+dateDiff = datetime.date.today() - time
+dateDiff = dateDiff.days
 
-for i in range(10):
+dirName = "CrawledData"
+if os.path.isdir(dirName) == False:
+	print("No Directory : " + dirName)
+	print("Make Directory : " + dirName)
+	os.makedirs(os.path.join(dirName))
+
+for i in range(dateDiff):
 	date = time.strftime('%Y%m%d')
 	time += datetime.timedelta(days=1)
 	headers = {'Referer' : 'http://marketdata.krx.co.kr/mdi',
@@ -34,5 +43,7 @@ for i in range(10):
 	if len(down.content) > 1000:
 		down = pd.read_csv(BytesIO(down.content), header=0, thousands=',')
 		down = down.loc[:, ['종목코드', '종목명', '현재가','시가총액']]
-		down.to_csv("/home/ubuntu/CrawledData/" + date + '.csv', header=True, index=False)
+		down.to_csv("CrawledData/" + date + '.csv', header=True, index=False)
 		print(date)
+
+print("Init Crawling Finished")
