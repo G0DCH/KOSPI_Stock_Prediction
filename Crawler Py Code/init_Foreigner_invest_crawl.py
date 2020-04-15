@@ -1,6 +1,6 @@
 #-*- coding:utf-8 -*-
 
-#2001년 1월 1일부터 오늘까지의 연기금 매매 동향을 크롤링 해옴
+#2001년 1월 1일부터 오늘까지의 외인 매매 동향을 크롤링 해옴
 import pandas as pd
 import numpy as np
 import requests
@@ -12,7 +12,7 @@ time = datetime.date(2001,1,1)
 dateDiff = datetime.date.today() - time
 dateDiff = dateDiff.days
 
-dirName = "NPSCrawledData"
+dirName = "ForeignerCrawledData"
 KOSPIdirName = "CrawledData/"
 if os.path.isdir(dirName) == False:
 	print("No Directory : " + dirName)
@@ -34,7 +34,7 @@ for i in range(dateDiff):
 	                'filetype' : "csv",
                 	'url' : "MKD/04/0404/04040400/mkd04040400",
                     'stctype' : "STK",
-                    'var_invr_cd' : "6000",
+                    'var_invr_cd' : "9000",
                     'schdate' : date,
 					'etctype' : 'ST',
                     'pagePath' : "/contents/MKD/04/0404/04040400/MKD04040400.jsp"}
