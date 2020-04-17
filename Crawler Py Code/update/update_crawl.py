@@ -56,5 +56,5 @@ def update_crawl():
 
 	print("Update Crawling Finished")
 
-if if __name__ == "__main__":
+if __name__ == "__main__":
 	update_crawl()
