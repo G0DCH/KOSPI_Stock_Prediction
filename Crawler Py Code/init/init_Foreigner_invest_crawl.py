@@ -7,11 +7,13 @@ import requests
 from io	import BytesIO
 import datetime
 import os
+import sys
 
 def init_Foreigner_invest_crawl():
 	time = datetime.date(2001,1,1)
 	dateDiff = datetime.date.today() - time
 	dateDiff = dateDiff.days
+	funcName = sys._getframe().f_code.co_name
 
 	dirName = "ForeignerCrawledData"
 	KOSPIdirName = "CrawledData/"
@@ -51,7 +53,7 @@ def init_Foreigner_invest_crawl():
 			down = pd.read_csv(BytesIO(down.content), header=0, thousands=',')
 			down = down.loc[:, ['종목코드', '종목명', '순매수거래량','순매수거래대금']]
 			down.to_csv(dirName + '/' + date + '.csv', header=True, index=False)
-			print(date)
+			print(funcName + ' : ' + date)
 
 	print("Init Foreign Crawling Finished")
 

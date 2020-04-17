@@ -6,11 +6,13 @@ import requests
 from io	import BytesIO
 import datetime
 import os
+import sys
 
 def init_crawl():
 	time = datetime.date(2001,1,1)
 	dateDiff = datetime.date.today() - time
 	dateDiff = dateDiff.days
+	funcName = sys._getframe().f_code.co_name
 
 	dirName = "CrawledData"
 	if os.path.isdir(dirName) == False:
@@ -45,7 +47,7 @@ def init_crawl():
 			down = pd.read_csv(BytesIO(down.content), header=0, thousands=',')
 			down = down.loc[:, ['종목코드', '종목명', '현재가','시가총액']]
 			down.to_csv("CrawledData/" + date + '.csv', header=True, index=False)
-			print(date)
+			print(funcName + ' : ' + date)
 
 	print("Init Crawling Finished")
 
