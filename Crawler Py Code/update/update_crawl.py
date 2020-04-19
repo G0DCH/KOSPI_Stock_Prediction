@@ -17,17 +17,21 @@ def update_crawl():
 	funcName = sys._getframe().f_code.co_name
 
 	dirName = "CrawledData"
-	if os.path.isdir(dirName) == False:
-		print("No Directory : " + dirName)
-		print("Make Directory : " + dirName)
-		os.makedirs(os.path.join(dirName))
+	path = os.path.dirname(os.path.abspath(__file__))
+	path = os.path.split(path)
+	path = path[0] + '/' + dirName
+	
+	if os.path.isdir(path) == False:
+		print("No Directory : " + path)
+		print("Make Directory : " + path)
+		os.makedirs(os.path.join(path))
 
 	for i in range(dateDiff):
 		date = time.strftime('%Y%m%d')
 		time += datetime.timedelta(days=-1)
 
 		# 크롤링 진행 중 과거에 크롤링 한 데이터가 있으면 크롤링 중단
-		if os.path.isfile(dirName + '/' + date + '.csv') == True:
+		if os.path.isfile(path + '/' + date + '.csv') == True:
 			break
 
 		headers = {'Referer' : 'http://marketdata.krx.co.kr/mdi',
@@ -53,7 +57,7 @@ def update_crawl():
 		if len(down.content) > 1000:
 			down = pd.read_csv(BytesIO(down.content), header=0, thousands=',')
 			down = down.loc[:, ['종목코드', '종목명', '현재가','시가총액']]
-			down.to_csv("CrawledData/" + date + '.csv', header=True, index=False)
+			down.to_csv(path + '/' + date + '.csv', header=True, index=False)
 			print(funcName + ' : ' + date)
 
 	print("Update Crawling Finished")

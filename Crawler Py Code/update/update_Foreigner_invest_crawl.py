@@ -18,20 +18,25 @@ def update_Foreigner_invest_crawl():
 
 	dirName = "ForeignerCrawledData"
 	KOSPIdirName = "CrawledData/"
-	if os.path.isdir(dirName) == False:
-		print("No Directory : " + dirName)
-		print("Make Directory : " + dirName)
-		os.makedirs(os.path.join(dirName))
+	path = os.path.dirname(os.path.abspath(__file__))
+	path = os.path.split(path)
+	KOSPIpath = path[0] + '/' + KOSPIdirName
+	path = path[0] + '/' + dirName
+	
+	if os.path.isdir(path) == False:
+		print("No Directory : " + path)
+		print("Make Directory : " + path)
+		os.makedirs(os.path.join(path))
 
 	for i in range(dateDiff):
 		date = time.strftime('%Y%m%d')
 		time += datetime.timedelta(days=-1)
 
-		if os.path.isfile(KOSPIdirName + date + '.csv') == False:
+		if os.path.isfile(KOSPIpath + date + '.csv') == False:
 			continue
 
 		# 크롤링 진행 중 과거에 크롤링 한 데이터가 있으면 크롤링 중단
-		if os.path.isfile(dirName + '/' + date + '.csv') == True:
+		if os.path.isfile(path + '/' + date + '.csv') == True:
 			break
 
 		headers = {'Referer' : 'http://marketdata.krx.co.kr/mdi',
@@ -57,7 +62,7 @@ def update_Foreigner_invest_crawl():
 		if len(down.content) > 1000:
 			down = pd.read_csv(BytesIO(down.content), header=0, thousands=',')
 			down = down.loc[:, ['종목코드', '종목명', '순매수거래량','순매수거래대금']]
-			down.to_csv(dirName + '/' + date + '.csv', header=True, index=False)
+			down.to_csv(path + '/' + date + '.csv', header=True, index=False)
 			print(funcName + ' : ' + date)
 
 	print("Update Foreign Crawling Finished")
