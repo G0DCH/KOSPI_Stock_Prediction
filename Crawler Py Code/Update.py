@@ -1,9 +1,15 @@
 #-*- coding:utf-8 -*-
 
 import threading
+import datetime
 from update import update_crawl
 from update import update_Foreigner_invest_crawl
 from update import update_NPS_invest_crawl
+
+date = datetime.date.today()
+date = date.strftime('%Y%m%d')
+
+print(date + " : Update Crawling Start")
 
 update_crawl.update_crawl()
 
@@ -19,4 +25,4 @@ nps.start()
 foreign.join()
 nps.join()
 
-print('Crawling Finished')
+print(date + ' : Update Crawling Finished')
