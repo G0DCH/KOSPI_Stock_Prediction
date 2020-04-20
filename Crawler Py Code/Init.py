@@ -16,4 +16,7 @@ nps = threading.Thread(target=init_NPS_invest_crawl.init_NPS_invest_crawl)
 foreign.start()
 nps.start()
 
+foreign.join()
+nps.join()
+
 print('Crawling Finished')
