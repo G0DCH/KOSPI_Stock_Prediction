@@ -1,0 +1,5 @@
+/Crawler Py Code/CrawledData/*
+/Crawler Py Code/ForeignerCrawledData/*
+/Crawler Py Code/NPSCrawledData/*
+
+*.pyc
