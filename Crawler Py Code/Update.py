@@ -10,6 +10,8 @@ from update import update_NPS_invest_crawl
 date = datetime.date.today()
 date = date.strftime('%Y%m%d')
 
+print
+print('*********************************')
 print(date + " : Update Crawling Start")
 
 update_crawl.update_crawl()
@@ -26,6 +28,8 @@ nps.start()
 foreign.join()
 nps.join()
 
-UnifyCrawledData()
+UnifyCrawledData.UnifyCrawledData()
 
 print(date + ' : Update Crawling Finished')
+print('*********************************')
+print

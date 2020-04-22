@@ -10,6 +10,8 @@ from init import init_NPS_invest_crawl
 date = datetime.date.today()
 date = date.strftime('%Y%m%d')
 
+print
+print('*********************************')
 print(date + " : Init Crawling Start")
 
 init_crawl.init_crawl()
@@ -26,6 +28,8 @@ nps.start()
 foreign.join()
 nps.join()
 
-UnifyCrawledData()
+UnifyCrawledData.UnifyCrawledData()
 
 print(date + ' : Init Crawling Finished')
+print('*********************************')
+print
