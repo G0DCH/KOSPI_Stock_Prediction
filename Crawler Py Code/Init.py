@@ -2,6 +2,7 @@
 
 import threading
 import datetime
+import UnifyCrawledData
 from init import init_crawl
 from init import init_Foreigner_invest_crawl
 from init import init_NPS_invest_crawl
@@ -24,5 +25,7 @@ nps.start()
 
 foreign.join()
 nps.join()
+
+UnifyCrawledData()
 
 print(date + ' : Init Crawling Finished')
