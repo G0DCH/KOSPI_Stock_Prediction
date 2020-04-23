@@ -42,7 +42,7 @@ def ReconstructCrawledData():
             stockData = UnifiedData[stockCodes == stockCode].copy()
             Date = dataFileName.split('.')[0]
             stockData['날짜'] = Date
-            dataDictionary[stockCode] = dataDictionary[stockCode].append(stockData, ignore_index = True)
+            dataDictionary[stockCode] = dataDictionary[stockCode].append(stockData, ignore_index = True, sort = False)
         
         print(funcName + ' : ' + Date)
 
@@ -50,8 +50,8 @@ def ReconstructCrawledData():
 
     # 데이터 프레임을 종목 코드를 이름으로 해서 파일로 저장
     for dataKey in dataDictionary:
-        dataDictionary[datakey].sort_values(by = ['날짜'], axis = 0, inplace = True)
-        dataDictionary[dataKey].to_csv(os.path.join(RecontructPath, dataKey), header = True, index = False)
+        data = dataDictionary[dataKey]
+        data.to_csv(os.path.join(RecontructPath, dataKey), header = True, index = False)
         print(funcName + ' : ' + dataKey)
 
     print('Recontruct Data Finished')
