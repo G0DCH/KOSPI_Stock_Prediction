@@ -54,8 +54,9 @@ def ReconstructCrawledData():
     # 데이터 프레임을 종목 코드를 이름으로 해서 파일로 저장
     for dataKey in dataDictionary:
         data = dataDictionary[dataKey]
-        data.to_csv(os.path.join(RecontructPath, dataKey), header = True, index = False)
-        print(funcName + ' : ' + dataKey)
+        fileName = data + '.csv'
+        data.to_csv(os.path.join(RecontructPath, fileName), header = True, index = False)
+        print(funcName + ' : ' + fileName)
 
     print('Recontruct Data Finished')
     print('time : ' + str(timedelta(seconds = time.time() - start)))
