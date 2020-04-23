@@ -3,8 +3,11 @@
 import pandas as pd
 import os
 import sys
+import time
+from datetime import timedelta
 
 def ReconstructCrawledData():
+    start = time.time()
     funcName = sys._getframe().f_code.co_name
 
     UnifyDirName = 'UnifiedCrawledData'
@@ -14,11 +17,6 @@ def ReconstructCrawledData():
 
     RecontructPath = os.path.join(path, ReconstructDirName)
     UnifyPath = os.path.join(path, UnifyDirName)
-
-    if os.path.isdir(RecontructPath) == False:
-        print("No Directory : " + RecontructPath)
-        print("Make Directory : " + RecontructPath)
-        os.makedirs(os.path.join(RecontructPath))
 
     dataFileNameList = os.listdir(UnifyPath)
     dataFileNameList.sort()
@@ -48,6 +46,11 @@ def ReconstructCrawledData():
 
     print(funcName + ' : ' + 'Reconstuct DataFrame Finished')
 
+    if os.path.isdir(RecontructPath) == False:
+        print("No Directory : " + RecontructPath)
+        print("Make Directory : " + RecontructPath)
+        os.makedirs(os.path.join(RecontructPath))
+
     # 데이터 프레임을 종목 코드를 이름으로 해서 파일로 저장
     for dataKey in dataDictionary:
         data = dataDictionary[dataKey]
@@ -55,6 +58,7 @@ def ReconstructCrawledData():
         print(funcName + ' : ' + dataKey)
 
     print('Recontruct Data Finished')
+    print('time : ' + str(timedelta(seconds = time.time() - start)))
 
 if __name__ == "__main__":
     ReconstructCrawledData()
