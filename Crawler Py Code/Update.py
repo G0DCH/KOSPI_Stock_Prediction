@@ -6,6 +6,7 @@ import UnifyCrawledData
 from update import update_crawl
 from update import update_Foreigner_invest_crawl
 from update import update_NPS_invest_crawl
+from reconstruct import UpdateReconstructCrawledData
 
 date = datetime.date.today()
 date = date.strftime('%Y%m%d')
@@ -29,6 +30,7 @@ foreign.join()
 nps.join()
 
 UnifyCrawledData.UnifyCrawledData()
+UpdateReconstructCrawledData.UpdateReconstructCrawledData()
 
 print(date + ' : Update Crawling Finished')
 print('*********************************')

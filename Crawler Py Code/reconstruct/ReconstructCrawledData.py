@@ -36,14 +36,14 @@ def ReconstructCrawledData():
         UnifiedData = pd.read_csv(os.path.join(UnifyPath, dataFileName))
 
         stockCodes = UnifiedData['종목코드']
+        Date = dataFileName.split('.')[0]
 
         # 종목 코드 별로 데이터 저장
         for stockCode in stockCodes:
             if dataDictionary.has_key(stockCode) == False:
-                print('No Value in Dictionary, Make Key Value Pair : ' + stockCode)
+                #print('No Value in Dictionary, Make Key Value Pair : ' + stockCode)
                 dataDictionary[stockCode] = emptyFrame
             stockData = UnifiedData[stockCodes == stockCode].copy()
-            Date = dataFileName.split('.')[0]
             stockData['날짜'] = Date
             dataDictionary[stockCode] = dataDictionary[stockCode].append(stockData, ignore_index = True, sort = False)
         
