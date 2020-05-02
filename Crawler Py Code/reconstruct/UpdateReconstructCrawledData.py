@@ -42,8 +42,6 @@ def UpdateReconstructCrawledData():
     emptyFrame = pd.DataFrame(columns = ['날짜', '종목코드', '종목명', '현재가', '시가총액', '외인순매수거래량', 
                                         '외인순매수거래대금', '연기금순매수거래량', '연기금순매수거래대금'])
 
-    newDate = dataFileNameList[len(dataFileNameList) - 1].split('.')[0]
-
     # dataFileName은 날짜.csv임
     # 종목 코드별로 데이터를 저장함
     for index in range(lastIndex + 1, len(dataFileNameList)):
@@ -55,6 +53,11 @@ def UpdateReconstructCrawledData():
 
         # 종목 코드 별로 데이터 저장
         for stockCode in stockCodes:
+            checkData = pd.read_csv(os.path.join(RecontructPath, (stockCode + '.csv')))
+
+            if (checkData['날짜'] == int(Date)).any():
+                continue
+
             if dataDictionary.has_key(stockCode) == False:
                 #print('No Value in Dictionary, Make Key Value Pair : ' + stockCode)
                 dataDictionary[stockCode] = emptyFrame
@@ -71,8 +74,9 @@ def UpdateReconstructCrawledData():
         data = dataDictionary[dataKey]
         fileName = str(dataKey) + '.csv'
         data.to_csv(os.path.join(RecontructPath, fileName), mode = 'a', header = False, index = False)
-        print(funcName + ' : ' + fileName)
+        #print(funcName + ' : ' + fileName)
 
+    newDate = dataFileNameList[len(dataFileNameList) - 1].split('.')[0]
     LastDateFile = open(LastDateFilePath, 'w')
     LastDateFile.write(newDate)
     LastDateFile.close()

@@ -61,7 +61,7 @@ def ReconstructCrawledData():
         data = dataDictionary[dataKey]
         fileName = str(dataKey) + '.csv'
         data.to_csv(os.path.join(RecontructPath, fileName), header = True, index = False)
-        print(funcName + ' : ' + fileName)
+        #print(funcName + ' : ' + fileName)
 
     LastDateFile = open(LastDateFilePath, 'w')
     LastDateFile.write(newDate)
