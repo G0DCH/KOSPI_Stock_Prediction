@@ -82,7 +82,7 @@ def LoadData(window_Size):
         '외인순매수거래대금', '연기금순매수거래량', '연기금순매수거래대금']]
     windowSize = window_Size + 1
     
-    for index in range(len(data) - windowSize):
+    for index in range(len(data) - windowSize + 1):
     #for index in range(len(data) - windowSize - 12, len(data) - windowSize):
         stockData = data[index : index + windowSize].copy()
         result.append(stockData)
@@ -216,6 +216,7 @@ def Run():
     result_predict = []
     for i in range(-len(pred), 0):
         result_predict.append((pred[i] + 1) * pivotDatas[i])
+    print(result_predict[-1])
     plt.figure(facecolor = 'white')
     plt.plot(y_test2, label='actual')
     plt.plot(result_predict, label='prediction')
