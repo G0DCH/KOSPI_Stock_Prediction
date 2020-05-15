@@ -1,6 +1,6 @@
 /Crawler Py Code/CrawledData/*
 /Crawler Py Code/ForeignerCrawledData/*
 /Crawler Py Code/NPSCrawledData/*
+/Crawler Py Code/ReconstructedCrawledData/*
 
 *.pyc
-*.txt
