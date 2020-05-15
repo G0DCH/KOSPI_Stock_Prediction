@@ -33,7 +33,7 @@ def ReconstructCrawledData():
     # dataFileName은 날짜.csv임
     # 종목 코드별로 데이터를 저장함
     for dataFileName in dataFileNameList:
-        UnifiedData = pd.read_csv(os.path.join(UnifyPath, dataFileName))
+        UnifiedData = pd.read_csv(os.path.join(UnifyPath, dataFileName), dtype = {'종목코드':np.str})
 
         stockCodes = UnifiedData['종목코드']
         Date = dataFileName.split('.')[0]

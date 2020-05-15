@@ -46,14 +46,14 @@ def UpdateReconstructCrawledData():
     # 종목 코드별로 데이터를 저장함
     for index in range(lastIndex + 1, len(dataFileNameList)):
         dataFileName = dataFileNameList[index]
-        UnifiedData = pd.read_csv(os.path.join(UnifyPath, dataFileName))
+        UnifiedData = pd.read_csv(os.path.join(UnifyPath, dataFileName), dtype = {'종목코드':np.str})
 
         stockCodes = UnifiedData['종목코드']
         Date = dataFileName.split('.')[0]
 
         # 종목 코드 별로 데이터 저장
         for stockCode in stockCodes:
-            checkData = pd.read_csv(os.path.join(RecontructPath, (stockCode + '.csv')))
+            checkData = pd.read_csv(os.path.join(RecontructPath, (stockCode + '.csv')), dtype = {'종목코드':np.str})
 
             if (checkData['날짜'] == int(Date)).any():
                 continue

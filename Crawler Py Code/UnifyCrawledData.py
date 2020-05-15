@@ -33,9 +33,9 @@ def UnifyCrawledData():
         if os.path.isfile(dataFilePath) == True:
             continue
 
-        KOSPIDataFile = pd.read_csv(os.path.join(KOSPIPath, dataFileName))
-        ForeignDataFile = pd.read_csv(os.path.join(ForeignPath, dataFileName))
-        NPSDataFile = pd.read_csv(os.path.join(NPSPath, dataFileName))
+        KOSPIDataFile = pd.read_csv(os.path.join(KOSPIPath, dataFileName), dtype = {'종목코드':np.str})
+        ForeignDataFile = pd.read_csv(os.path.join(ForeignPath, dataFileName), dtype = {'종목코드':np.str})
+        NPSDataFile = pd.read_csv(os.path.join(NPSPath, dataFileName), dtype = {'종목코드':np.str})
 
         ForeignDataFile.rename(columns = {'순매수거래량' : '외인순매수거래량'}, inplace = True)
         ForeignDataFile.rename(columns = {'순매수거래대금' : '외인순매수거래대금'}, inplace = True)
