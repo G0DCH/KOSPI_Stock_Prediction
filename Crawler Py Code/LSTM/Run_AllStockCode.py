@@ -26,7 +26,6 @@ def Normalize(dataList, stockCode):
     normalizedDatas = []
 
     start = time.time()
-    print('Normalize Start')
     global pivotDatas
 
     for window in tqdm(dataList):
@@ -41,9 +40,6 @@ def Normalize(dataList, stockCode):
         normalizedDatas.append(normalizedWindow.values.tolist())
 
     result = np.array(normalizedDatas)
-
-    print('Normalize Finished')
-    print('Normalized time : ' + str(timedelta(seconds = time.time() - start)))
 
     return result
 
@@ -63,11 +59,13 @@ def LoadData(window_Size):
     dataFileNameList = os.listdir(PriceChangePath)
     dataFileNameList.sort()
 
-    train = np.zeros((0, 0))
+    train = None
     #x_test = np.zeros((0, 0))
     #y_test = np.zeros((0, 0))
     # 리스트에 window_Size 동안의 데이터를 추가함
-    for dataFileName in tqdm(dataFileNameList):
+    i = 1
+    length = len(dataFileNameList)
+    for dataFileName in dataFileNameList:
         windowResult = []
         data = pd.read_csv(os.path.join(PriceChangePath, dataFileName))
         stockCode = dataFileName.split('.')[0]
@@ -85,7 +83,12 @@ def LoadData(window_Size):
 
         result = Normalize(windowResult, stockCode)
         row = int(round(result.shape[0] * 0.9))
-        train = np.append(train, result[:row, :], axis = 0)
+        if type(train) == type(None):
+            train = result[:row, :]
+        else:
+            train = np.append(train, result[:row, :], axis = 0)
+        print('%d/%d : %s done' % (i, length, dataFileName))
+        i += 1
         #x_test = np.append(x_test, result[row:, :-1], axis = 0)
         #y_test = np.append(y_test, result[row:, -1, 1], axis = 0)
         
@@ -161,7 +164,7 @@ def BuildModel():
     return model
 
 def Run():
-    fileName = 'stock_batch512_epoch100.h5'
+    fileName = 'all_stock_batch512_epoch100.h5'
 
     x_train, y_train = LoadData(50) #, x_validate, y_validate = LoadData(50)
     x_test, y_test = LoadTestData(50, '005930.csv')
