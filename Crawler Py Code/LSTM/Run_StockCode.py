@@ -38,7 +38,6 @@ def Normalize(dataList, stockCode):
         normalizedWindow.loc[:] = window.loc[:] / pivot[:] - 1
         normalizedWindow['종목코드'] = stockCode
         normalizedWindow = normalizedWindow[column]
-        print(normalizedWindow)
         normalizedDatas.append(normalizedWindow.values.tolist())
 
     result = np.array(normalizedDatas)
@@ -68,7 +67,7 @@ def LoadData(window_Size):
     #for dataFileName in dataFileNameList:
     #    data = pd.read_csv(os.path.join(PriceChangePath, dataFileName))
     stockCode = '005930.csv'.split('.')[0]
-    data = pd.read_csv(os.path.join(PriceChangePath, stockCode), \
+    data = pd.read_csv(os.path.join(PriceChangePath, '005930.csv'), \
         dtype = {'날짜':np.int64, '종목코드':np.str, '종목명':np.str, \
             '현재가':np.int64, '시가총액':np.int64, '외인순매수거래량':np.int64, \
             '외인순매수거래대금':np.int64, '연기금순매수거래량':np.int64, '연기금순매수거래대금':np.int64})
