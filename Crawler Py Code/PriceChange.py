@@ -28,7 +28,8 @@ def PriceChange():
     PriceChangeFile = pd.read_csv(PriceChangeFileName, \
         dtype = {'종목코드':np.str, '현재가':np.int64, '외인순매수거래량':np.int64, '연기금순매수거래량':np.int64})
 
-    changeFrame = ['현재가', '외인순매수거래량', '연기금순매수거래량']
+    changePriceFrame = ['현재가']
+    changeFrame = ['외인순매수거래량', '연기금순매수거래량']
 
     # ChangeData는 액면 변경 데이터
     # changeFile은 액면 변경을 적용할 파일
@@ -36,8 +37,10 @@ def PriceChange():
         ChangeData = PriceChangeFile.iloc[i]
         changeFilePath = os.path.join(PriceChangePath, ChangeData['종목코드'] + '.csv')
         changeFile = pd.read_csv(changeFilePath, dtype = {'종목코드':np.str})
+        changeFile.loc[changeFile['날짜'] <= ChangeData['날짜'], changePriceFrame] = \
+            (changeFile[changeFile['날짜'] <= ChangeData['날짜']][changePriceFrame] * ChangeData['비율']).astype('int')
         changeFile.loc[changeFile['날짜'] <= ChangeData['날짜'], changeFrame] = \
-            (changeFile[changeFile['날짜'] <= ChangeData['날짜']][changeFrame] * ChangeData['비율']).astype('int')
+            (changeFile[changeFile['날짜'] <= ChangeData['날짜']][changeFrame] / ChangeData['비율']).astype('int')
         changeFile.to_csv(changeFilePath, header = True, index = False)
         print(str(ChangeData['날짜']) + ' : ' + ChangeData['종목코드'])
     

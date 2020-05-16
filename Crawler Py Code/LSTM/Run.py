@@ -12,7 +12,6 @@ from keras.layers.core import Dense, Activation, Dropout
 from keras.layers.recurrent import LSTM
 from keras.models import Sequential
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import MinMaxScaler
 
 start = time.time()
 
@@ -66,7 +65,10 @@ def LoadData(window_Size):
     # 리스트에 window_Size 동안의 데이터를 추가함
     #for dataFileName in dataFileNameList:
     #    data = pd.read_csv(os.path.join(PriceChangePath, dataFileName))
-    data = pd.read_csv(os.path.join(PriceChangePath, '005930.csv'))
+    data = pd.read_csv(os.path.join(PriceChangePath, '005930.csv'), \
+        dtype = {'날짜':np.int64, '종목코드':np.str, '종목명':np.str, \
+            '현재가':np.int64, '시가총액':np.int64, '외인순매수거래량':np.int64, \
+            '외인순매수거래대금':np.int64, '연기금순매수거래량':np.int64, '연기금순매수거래대금':np.int64})
 
     data = data.loc[:, ['현재가', '외인순매수거래량', 
         '외인순매수거래대금', '연기금순매수거래량', '연기금순매수거래대금']]
@@ -108,7 +110,7 @@ def BuildModel():
     model.add(LSTM(100, return_sequences=False))
     model.add(Dropout(0.2))
 
-    model.add(Dense(output_dim=1))
+    model.add(Dense(1))
     model.add(Activation('linear'))
 
     model.compile(loss='mse', optimizer='rmsprop')
@@ -119,12 +121,12 @@ def Run():
     x_train, y_train, x_test, y_test = LoadData(50)
     model = BuildModel()
     
-    model.fit(x_train, y_train, batch_size=512, nb_epoch=100, validation_split=0.05)
+    model.fit(x_train, y_train, batch_size=512, epochs=100, validation_split=0.05)
     model.save('batch512_epoch100.h5')
 
-    from keras.models import load_model
+    #from keras.models import load_model
 
-    model = load_model('batch512_epoch100.h5')
+    #model = load_model('batch512_epoch100.h5')
 
     dateLength = 11
     x_test2 = x_test[-(dateLength + 1):]
