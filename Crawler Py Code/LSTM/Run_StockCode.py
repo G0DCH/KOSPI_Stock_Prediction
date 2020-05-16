@@ -32,7 +32,7 @@ def Normalize(dataList, stockCode):
     for window in tqdm(dataList):
         normalizedWindow = window.copy()
         pivot = window.copy()
-        pivotDatas.append(pivot.iloc[0, 1])
+        pivotDatas.append(pivot.iloc[0, 0])
         for i in range(len(pivot)):
             pivot.iloc[i] = pivot.iloc[0]
         normalizedWindow.loc[:] = window.loc[:] / pivot[:] - 1
