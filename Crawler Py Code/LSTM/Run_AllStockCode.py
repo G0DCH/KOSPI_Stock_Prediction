@@ -26,18 +26,30 @@ def Normalize(dataList, stockCode):
     normalizedDatas = []
 
     start = time.time()
-    global pivotDatas
 
-    for window in tqdm(dataList):
-        normalizedWindow = window.copy()
-        pivot = window.copy()
-        pivotDatas.append(pivot.iloc[0, 0])
-        for i in range(len(pivot)):
-            pivot.iloc[i] = pivot.iloc[0]
-        normalizedWindow.loc[:] = window.loc[:] / pivot[:] - 1
-        normalizedWindow['종목코드'] = stockCode
-        normalizedWindow = normalizedWindow[column]
-        normalizedDatas.append(normalizedWindow.values.tolist())
+    if stockCode == '005930':
+        global pivotDatas
+        for window in dataList: #tqdm(dataList):
+            normalizedWindow = window.copy()
+            pivot = window.copy()
+            pivotDatas.append(pivot.iloc[0, 0])
+            for i in range(len(pivot)):
+                pivot.iloc[i] = pivot.iloc[0]
+            normalizedWindow.loc[:] = window.loc[:] / pivot[:] - 1
+            normalizedWindow['종목코드'] = stockCode
+            normalizedWindow = normalizedWindow[column]
+            normalizedDatas.append(normalizedWindow.values.tolist())
+    else:
+        for window in dataList: #tqdm(dataList):
+            normalizedWindow = window.copy()
+            pivot = window.copy()
+            #pivotDatas.append(pivot.iloc[0, 0])
+            for i in range(len(pivot)):
+                pivot.iloc[i] = pivot.iloc[0]
+            normalizedWindow.loc[:] = window.loc[:] / pivot[:] - 1
+            normalizedWindow['종목코드'] = stockCode
+            normalizedWindow = normalizedWindow[column]
+            normalizedDatas.append(normalizedWindow.values.tolist())
 
     result = np.array(normalizedDatas)
 
@@ -169,6 +181,31 @@ def Run():
     x_train, y_train = LoadData(50) #, x_validate, y_validate = LoadData(50)
     x_test, y_test = LoadTestData(50, '005930.csv')
 
+    dirName = 'NPYAllStockCode'
+    path = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(path, dirName)
+    
+    x_train_name = os.path.join(path, 'all_stock_X_Train')
+    y_train_name = os.path.join(path, 'all_stock_Y_Train')
+    x_test_name = os.path.join(path, 'all_stock_X_Test')
+    y_test_name = os.path.join(path, 'all_stock_Y_Test')
+    pivot_name = os.path.join(path, 'all_stock_pivot')
+
+    if os.path.isdir(path) == False:
+        os.makedirs(path)
+    """
+    x_train = np.load(x_train_name + '.npy')
+    y_train = np.load(y_train_name + '.npy')
+    x_test = np.load(x_test_name + '.npy')
+    y_test = np.load(y_test_name + '.npy')
+    pivotDatas = np.load(pivot_name + '.npy')
+    """
+    np.save(x_train_name, x_train)
+    np.save(y_train_name, y_train)
+    np.save(x_test_name, x_test)
+    np.save(y_test_name, y_test)
+    np.save(pivot_name, np.array(pivotDatas))
+    
     model = BuildModel()
     
     model.fit(x_train, y_train, batch_size=512, epochs=100, validation_split=0.05)
@@ -178,6 +215,7 @@ def Run():
 
     #model = load_model(fileName)
 
+    """
     dateLength = 11
     x_test2 = x_test[-(dateLength + 1):]
     y_test2 = (y_test[-dateLength:].astype(np.float64) + 1) * pivotDatas[-dateLength:]
@@ -191,6 +229,7 @@ def Run():
     plt.plot(result_predict, label='prediction')
     plt.legend()
     plt.show()
+    """
 
 if __name__ == "__main__":
     Run()

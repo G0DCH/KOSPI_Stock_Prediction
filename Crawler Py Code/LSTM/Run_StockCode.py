@@ -121,15 +121,42 @@ def BuildModel():
 def Run():
     fileName = 'stock_batch512_epoch100.h5'
 
-    x_train, y_train, x_test, y_test = LoadData(50)
-    model = BuildModel()
+    #x_train, y_train, x_test, y_test = LoadData(50)
+    #model = BuildModel()
+
+    dirName = 'NPYStockCode'
+    path = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(path, dirName)
+    
+    x_train_name = os.path.join(path, 'stock_X_Train')
+    y_train_name = os.path.join(path, 'stock_Y_Train')
+    x_test_name = os.path.join(path, 'stock_X_Test')
+    y_test_name = os.path.join(path, 'stock_Y_Test')
+    pivot_name = os.path.join(path, 'stock_pivot')
+
+    if os.path.isdir(path) == False:
+        os.makedirs(path)
+    
+    x_train = np.load(x_train_name + '.npy')
+    y_train = np.load(y_train_name + '.npy')
+    x_test = np.load(x_test_name + '.npy')
+    y_test = np.load(y_test_name + '.npy')
+    pivotDatas = np.load(pivot_name + '.npy')
+    
+    """
+    np.save(x_train_name, x_train)
+    np.save(y_train_name, y_train)
+    np.save(x_test_name, x_test)
+    np.save(y_test_name, y_test)
+    np.save(pivot_name, np.array(pivotDatas))
     
     model.fit(x_train, y_train, batch_size=512, epochs=100, validation_split=0.05)
     model.save(fileName)
+    """
 
-    #from keras.models import load_model
+    from keras.models import load_model
 
-    #model = load_model(fileName)
+    model = load_model(fileName)
 
     dateLength = 11
     x_test2 = x_test[-(dateLength + 1):]
