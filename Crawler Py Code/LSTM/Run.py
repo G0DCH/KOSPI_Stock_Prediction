@@ -54,26 +54,25 @@ def LoadData(window_Size):
     start = time.time()
     print('Load Data Start')
 
-    ReconstructDirName = 'ReconstructedCrawledData'
+    PriceChangeDirName = 'PriceChangedData'
 
     path = os.path.dirname(os.path.abspath(__file__))
     path = os.path.dirname(path)
 
-    ReconstructPath = os.path.join(path, ReconstructDirName)
-    dataFileNameList = os.listdir(ReconstructPath)
+    PriceChangePath = os.path.join(path, PriceChangeDirName)
+    dataFileNameList = os.listdir(PriceChangePath)
 
     result = []
     # 리스트에 window_Size 동안의 데이터를 추가함
     #for dataFileName in dataFileNameList:
-    #    data = pd.read_csv(os.path.join(ReconstructPath, dataFileName))
-    data = pd.read_csv(os.path.join(ReconstructPath, '005930.csv'))
+    #    data = pd.read_csv(os.path.join(PriceChangePath, dataFileName))
+    data = pd.read_csv(os.path.join(PriceChangePath, '005930.csv'))
 
     data = data.loc[:, ['현재가', '외인순매수거래량', 
         '외인순매수거래대금', '연기금순매수거래량', '연기금순매수거래대금']]
     windowSize = window_Size + 1
     
     for index in range(len(data) - windowSize + 1):
-    #for index in range(len(data) - windowSize - 12, len(data) - windowSize):
         stockData = data[index : index + windowSize].copy()
         result.append(stockData)
 
@@ -118,26 +117,10 @@ def BuildModel():
 
 def Run():
     x_train, y_train, x_test, y_test = LoadData(50)
-    #model = BuildModel()
-    """
-    from keras.callbacks import EarlyStopping, ModelCheckpoint
-    early_stop = EarlyStopping(monitor='val_loss', patience=5)
-    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp_checkpoint.h5')
-    checkpoint = ModelCheckpoint(filename, monitor='val_loss', verbose=1, save_best_only=True, mode='auto')
-
-
-    history = model.fit(x_train, y_train, 
-                    epochs=200, 
-                    batch_size=16,
-                    validation_data=(x_valid, y_valid), 
-                    callbacks=[early_stop, checkpoint])
-
-    model.load_weights(filename)
-    pred = model.predict(test_feature)
-    """
+    model = BuildModel()
     
-    #model.fit(x_train, y_train, batch_size=512, nb_epoch=100, validation_split=0.05)
-    #model.save('batch512_epoch100.h5')
+    model.fit(x_train, y_train, batch_size=512, nb_epoch=100, validation_split=0.05)
+    model.save('batch512_epoch100.h5')
 
     from keras.models import load_model
 
