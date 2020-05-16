@@ -15,15 +15,14 @@ import matplotlib.pyplot as plt
 
 start = time.time()
 
-#emptyFrame = pd.DataFrame(columns = ['종목코드', '현재가', '외인순매수거래량', 
-#                                    '외인순매수거래대금', '연기금순매수거래량', '연기금순매수거래대금'])
-emptyFrame = pd.DataFrame(columns = ['현재가', '외인순매수거래량', 
-                                    '외인순매수거래대금', '연기금순매수거래량', '연기금순매수거래대금'])
+column = ['종목코드', '현재가', '외인순매수거래량', '외인순매수거래대금', '연기금순매수거래량', '연기금순매수거래대금']
+#column = ['현재가', '외인순매수거래량', '외인순매수거래대금', '연기금순매수거래량', '연기금순매수거래대금']
+emptyFrame = pd.DataFrame(columns = column)
 
 pivotDatas = []
 
 # 입력 받은 데이터를 정규화함
-def Normalize(dataList):
+def Normalize(dataList, stockCode):
     normalizedDatas = []
 
     start = time.time()
@@ -33,10 +32,13 @@ def Normalize(dataList):
     for window in tqdm(dataList):
         normalizedWindow = window.copy()
         pivot = window.copy()
-        pivotDatas.append(pivot.iloc[0, 0])
+        pivotDatas.append(pivot.iloc[0, 1])
         for i in range(len(pivot)):
             pivot.iloc[i] = pivot.iloc[0]
         normalizedWindow.loc[:] = window.loc[:] / pivot[:] - 1
+        normalizedWindow['종목코드'] = stockCode
+        normalizedWindow = normalizedWindow[column]
+        print(normalizedWindow)
         normalizedDatas.append(normalizedWindow.values.tolist())
 
     result = np.array(normalizedDatas)
@@ -65,13 +67,13 @@ def LoadData(window_Size):
     # 리스트에 window_Size 동안의 데이터를 추가함
     #for dataFileName in dataFileNameList:
     #    data = pd.read_csv(os.path.join(PriceChangePath, dataFileName))
-    data = pd.read_csv(os.path.join(PriceChangePath, '005930.csv'), \
+    stockCode = '005930.csv'.split('.')[0]
+    data = pd.read_csv(os.path.join(PriceChangePath, stockCode), \
         dtype = {'날짜':np.int64, '종목코드':np.str, '종목명':np.str, \
             '현재가':np.int64, '시가총액':np.int64, '외인순매수거래량':np.int64, \
             '외인순매수거래대금':np.int64, '연기금순매수거래량':np.int64, '연기금순매수거래대금':np.int64})
 
-    data = data.loc[:, ['현재가', '외인순매수거래량', 
-        '외인순매수거래대금', '연기금순매수거래량', '연기금순매수거래대금']]
+    data = data.loc[:, column[1:]]
     windowSize = window_Size + 1
     
     for index in range(len(data) - windowSize + 1):
@@ -79,8 +81,8 @@ def LoadData(window_Size):
         result.append(stockData)
 
     stockData = data[-50:].copy()
-    stockData = Normalize([stockData])
-    result = Normalize(result)
+    stockData = Normalize([stockData], stockCode)
+    result = Normalize(result, stockCode)
 
     # 90퍼센트는 train용 10퍼센트는 validate용으로 씀
     row = int(round(result.shape[0] * 0.9))
@@ -88,10 +90,10 @@ def LoadData(window_Size):
     np.random.shuffle(train)
 
     x_train = train[:, :-1]
-    y_train = train[:, -1, 0]
+    y_train = train[:, -1, 1]
     x_test = result[row:, :-1]
     x_test = np.append(x_test, stockData, axis = 0)
-    y_test = result[row:, -1, 0]
+    y_test = result[row:, -1, 1]
 
     x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], x_train.shape[2]))
     x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1], x_test.shape[2]))
@@ -105,7 +107,7 @@ def LoadData(window_Size):
 def BuildModel():
     model = Sequential()
 
-    model.add(LSTM(50, input_shape=(50,5), return_sequences=True))
+    model.add(LSTM(50, input_shape=(50, 6), return_sequences=True))
     model.add(Dropout(0.2))
     model.add(LSTM(100, return_sequences=False))
     model.add(Dropout(0.2))
@@ -118,7 +120,7 @@ def BuildModel():
     return model
 
 def Run():
-    fileName = 'batch512_epoch100.h5'
+    fileName = 'stock_batch512_epoch100.h5'
 
     x_train, y_train, x_test, y_test = LoadData(50)
     model = BuildModel()
