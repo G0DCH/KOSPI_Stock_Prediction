@@ -63,8 +63,11 @@ def LoadData(window_Size):
     print('Load Data Start')
 
     PriceChangeDirName = 'PriceChangedData'
-
+    dirName = 'NPYAllStockCode'
     path = os.path.dirname(os.path.abspath(__file__))
+
+    tmpSavePath = os.path.join(path, dirName)
+    tmpFileName = 'tmpData'
     path = os.path.dirname(path)
 
     PriceChangePath = os.path.join(path, PriceChangeDirName)
@@ -98,8 +101,15 @@ def LoadData(window_Size):
         if type(train) == type(None):
             train = result[:row, :]
         else:
-            train = np.append(train, result[:row, :], axis = 0)
+            # 너무 짧은 주가 데이터는 거름
+            if result.shape[1] == train[1]:
+                train = np.append(train, result[:row, :], axis = 0)
         print('%d/%d : %s done' % (i, length, dataFileName))
+
+        # 임시 저장
+        if i % 100 == 0:
+            tmp_File_Name = tmpFileName + '_' + str(i)
+            np.save(os.path.join(tmpSavePath, tmp_File_Name), train)
         i += 1
         #x_test = np.append(x_test, result[row:, :-1], axis = 0)
         #y_test = np.append(y_test, result[row:, -1, 1], axis = 0)
