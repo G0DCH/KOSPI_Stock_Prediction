@@ -1,7 +1,9 @@
 # KOSPI_Stock_Prediction
 KOSPI_Stock_Prediction, https://github.com/llSourcell/How-to-Predict-Stock-Prices-Easily-Demo 참조
 
-주가 예측 구독 웹사이트는 https://github.com/SuperNova911/Postman 에서 
+
+주가 예측 구독 웹사이트는 https://github.com/SuperNova911/Postman 에서 진행
+
 
 1. 코스피에 포함된 주식 종가 크롤링 - 완료
 2. 연기금, 외인 매매동향 크롤링 - 완료
