@@ -70,6 +70,9 @@ def LoadData(window_Size):
     tmpFileName = 'tmpData'
     path = os.path.dirname(path)
 
+    if os.path.isdir(tmpSavePath) == False:
+        os.makedirs(tmpSavePath)
+
     PriceChangePath = os.path.join(path, PriceChangeDirName)
     dataFileNameList = os.listdir(PriceChangePath)
     dataFileNameList.sort()
