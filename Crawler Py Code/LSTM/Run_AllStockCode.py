@@ -105,7 +105,7 @@ def LoadData(window_Size):
             train = result[:row, :]
         else:
             # 너무 짧은 주가 데이터는 거름
-            if result.shape[1] == train[1]:
+            if result.shape[1] == train.shape[1]:
                 train = np.append(train, result[:row, :], axis = 0)
         print('%d/%d : %s done' % (i, length, dataFileName))
 
