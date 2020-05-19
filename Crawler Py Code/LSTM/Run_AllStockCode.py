@@ -53,7 +53,7 @@ def Normalize(dataList, stockCode):
 
     result = np.array(normalizedDatas)
 
-        return result
+    return result
 
 
 # 학습 데이터 셋 만듬
