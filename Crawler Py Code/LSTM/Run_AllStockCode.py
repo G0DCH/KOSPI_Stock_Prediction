@@ -53,7 +53,10 @@ def Normalize(dataList, stockCode):
 
     result = np.array(normalizedDatas)
 
-    return result
+    if len(result) == 0:
+        return None
+    else:
+        return result
 
 
 # 학습 데이터 셋 만듬
@@ -85,7 +88,6 @@ def LoadData(window_Size):
     length = len(dataFileNameList)
     for dataFileName in dataFileNameList:
         windowResult = []
-        data = pd.read_csv(os.path.join(PriceChangePath, dataFileName))
         stockCode = dataFileName.split('.')[0]
         data = pd.read_csv(os.path.join(PriceChangePath, dataFileName), \
             dtype = {'날짜':np.int64, '종목코드':np.str, '종목명':np.str, \
@@ -104,8 +106,8 @@ def LoadData(window_Size):
         if type(train) == type(None):
             train = result[:row, :]
         else:
-            # 너무 짧은 주가 데이터는 거름
-            if result.shape[1] == train.shape[1]:
+            # 51일 미만의 주가 데이터는 거름
+            if (result == None) == False:
                 train = np.append(train, result[:row, :], axis = 0)
         print('%d/%d : %s done' % (i, length, dataFileName))
 
