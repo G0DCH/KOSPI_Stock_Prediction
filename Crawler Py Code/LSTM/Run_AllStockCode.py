@@ -53,9 +53,6 @@ def Normalize(dataList, stockCode):
 
     result = np.array(normalizedDatas)
 
-    if len(result) == 0:
-        return None
-    else:
         return result
 
 
@@ -86,7 +83,14 @@ def LoadData(window_Size):
     # 리스트에 window_Size 동안의 데이터를 추가함
     i = 1
     length = len(dataFileNameList)
+
+    # 600번째 부터 이어 받기
+    train = np.load('/home/chlee/KOSPI_Prediction/LSTM/NPYAllStockCode/tmpData_600.npy')
     for dataFileName in dataFileNameList:
+        # 600번째 까지는 패스
+        if i < 601:
+            i += 1
+            continue
         windowResult = []
         stockCode = dataFileName.split('.')[0]
         data = pd.read_csv(os.path.join(PriceChangePath, dataFileName), \
@@ -107,7 +111,7 @@ def LoadData(window_Size):
             train = result[:row, :]
         else:
             # 51일 미만의 주가 데이터는 거름
-            if (result == None) == False:
+            if (result.shape[0] == 0) == False:
                 train = np.append(train, result[:row, :], axis = 0)
         print('%d/%d : %s done' % (i, length, dataFileName))
 
