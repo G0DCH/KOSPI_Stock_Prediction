@@ -39,6 +39,21 @@ def Hash(code):
 
 pivotCode = Hash('000010')
 
+def nanToZero(array, isTwo):
+    tmpArray = array.copy()
+    if isTwo:
+        for i in tqdm(range(tmpArray.shape[0])):
+            for j in range(tmpArray.shape[1]):
+                tmp = tmpArray[i, j, :].astype('float64')
+                tmpArray[i, j, np.isnan(tmp)] = 0
+                tmpArray[i, j, np.isinf(tmp)] = 0
+    else:
+        tmpArray = tmpArray.astype('float64')
+        tmpArray[np.isnan(tmpArray)] = 0
+        tmpArray[np.isinf(tmpArray)] = 0
+
+    return tmpArray
+
 # 입력 받은 데이터를 정규화함
 def Normalize(dataList, stockCode):
     normalizedDatas = []
@@ -103,7 +118,7 @@ def LoadData(window_Size):
     length = len(dataFileNameList)
 
     # 1400번째 부터 이어 받기
-    train = np.load('/home/chlee/KOSPI_Prediction/LSTM/NPYAllStockCode/tmpData_600.npy')
+    train = np.load('/home/chlee/KOSPI_Prediction/LSTM/NPYAllStockCode/tmpData_1400.npy')
     for dataFileName in dataFileNameList:
         # 1400번째 까지는 패스
         if i < 1401:
@@ -142,8 +157,8 @@ def LoadData(window_Size):
         #y_test = np.append(y_test, result[row:, -1, 1], axis = 0)
         
     np.save(os.path.join(tmpSavePath, 'tmpData_Finished'), train)
-    for index_0 in range(len(train)):
-        for index_1 in range(len(train[:, :])):
+    for index_0 in range(train.shape[0]):
+        for index_1 in range(train.shape[1]):
             train[index_0, index_1, 0] = \
                 float(Hash(train[index_0, index_1, 0])) / float(pivotCode) - 1
     # 90퍼센트는 train용 10퍼센트는 validate용으로 씀
@@ -219,8 +234,8 @@ def BuildModel():
 def Run():
     fileName = 'all_stock_batch512_epoch100.h5'
 
-    x_train, y_train = LoadData(50) #, x_validate, y_validate = LoadData(50)
-    x_test, y_test = LoadTestData(50, '005930.csv')
+    #x_train, y_train = LoadData(50) #, x_validate, y_validate = LoadData(50)
+    #x_test, y_test = LoadTestData(50, '005930.csv')
 
     dirName = 'NPYAllStockCode'
     path = os.path.dirname(os.path.abspath(__file__))
@@ -234,19 +249,28 @@ def Run():
 
     if os.path.isdir(path) == False:
         os.makedirs(path)
-    """
+    
     x_train = np.load(x_train_name + '.npy')
     y_train = np.load(y_train_name + '.npy')
     x_test = np.load(x_test_name + '.npy')
     y_test = np.load(y_test_name + '.npy')
     pivotDatas = np.load(pivot_name + '.npy')
+
     """
+    # Nan 값이나 inf 값을 0으로 바꿈
+    x_train = nanToZero(x_train, True)
+    y_train = nanToZero(y_train, False)
+    x_test = nanToZero(x_test, True)
+    y_test = nanToZero(y_test, False)
+    pivotDatas = nanToZero(pivotDatas, False)
+    
     np.save(x_train_name, x_train)
     np.save(y_train_name, y_train)
     np.save(x_test_name, x_test)
     np.save(y_test_name, y_test)
     np.save(pivot_name, np.array(pivotDatas))
-    
+    """
+
     model = BuildModel()
     
     model.fit(x_train, y_train, batch_size=512, epochs=100, validation_split=0.05)
