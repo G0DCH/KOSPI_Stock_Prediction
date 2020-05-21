@@ -21,6 +21,24 @@ emptyFrame = pd.DataFrame(columns = column)
 
 pivotDatas = []
 
+codeTable = {}
+
+def Hash(code):
+    p = 31
+    m = 1e9 + 9
+    
+    hashValue = 0
+    pow_p = 1
+
+    for i in range(len(code)):
+        hashValue = (hashValue + (ord(code[i]) - ord('0') + 1) * pow_p) % m
+        pow_p = (p * pow_p) % m
+    codeTable[hashValue] = code
+
+    return hashValue
+
+pivotCode = Hash('000010')
+
 # 입력 받은 데이터를 정규화함
 def Normalize(dataList, stockCode):
     normalizedDatas = []
@@ -84,11 +102,11 @@ def LoadData(window_Size):
     i = 1
     length = len(dataFileNameList)
 
-    # 600번째 부터 이어 받기
+    # 1400번째 부터 이어 받기
     train = np.load('/home/chlee/KOSPI_Prediction/LSTM/NPYAllStockCode/tmpData_600.npy')
     for dataFileName in dataFileNameList:
-        # 600번째 까지는 패스
-        if i < 601:
+        # 1400번째 까지는 패스
+        if i < 1401:
             i += 1
             continue
         windowResult = []
@@ -123,7 +141,11 @@ def LoadData(window_Size):
         #x_test = np.append(x_test, result[row:, :-1], axis = 0)
         #y_test = np.append(y_test, result[row:, -1, 1], axis = 0)
         
-
+    np.save(os.path.join(tmpSavePath, 'tmpData_Finished'), train)
+    for index_0 in range(len(train)):
+        for index_1 in range(len(train[:, :])):
+            train[index_0, index_1, 0] = \
+                float(Hash(train[index_0, index_1, 0])) / float(pivotCode) - 1
     # 90퍼센트는 train용 10퍼센트는 validate용으로 씀
     np.random.shuffle(train)
 
