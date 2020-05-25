@@ -5,6 +5,7 @@ import os
 import sys
 import time
 import ReconstructCrawledData
+import numpy as np
 from datetime import timedelta
 
 def UpdateReconstructCrawledData():
