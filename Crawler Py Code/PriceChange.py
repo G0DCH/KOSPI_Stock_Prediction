@@ -42,7 +42,8 @@ def PriceChange():
         changeFile.loc[changeFile['날짜'] <= ChangeData['날짜'], changeFrame] = \
             (changeFile[changeFile['날짜'] <= ChangeData['날짜']][changeFrame] / ChangeData['비율']).astype('int')
         changeFile.to_csv(changeFilePath, header = True, index = False)
-        print(str(ChangeData['날짜']) + ' : ' + ChangeData['종목코드'])
+        if __name__ == "__main__":
+            print(str(ChangeData['날짜']) + ' : ' + ChangeData['종목코드'])
     
     print('Price Change Finished')
     
