@@ -7,6 +7,7 @@ from update import update_crawl
 from update import update_Foreigner_invest_crawl
 from update import update_NPS_invest_crawl
 from reconstruct import UpdateReconstructCrawledData
+import PriceChange
 
 date = datetime.date.today()
 date = date.strftime('%Y%m%d')
@@ -31,6 +32,8 @@ nps.join()
 
 UnifyCrawledData.UnifyCrawledData()
 UpdateReconstructCrawledData.UpdateReconstructCrawledData()
+
+PriceChange.PriceChange()
 
 print(date + ' : Update Crawling Finished')
 print('*********************************')
