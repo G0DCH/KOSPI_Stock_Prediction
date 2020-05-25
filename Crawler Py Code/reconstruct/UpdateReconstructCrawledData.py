@@ -53,10 +53,12 @@ def UpdateReconstructCrawledData():
 
         # 종목 코드 별로 데이터 저장
         for stockCode in stockCodes:
-            checkData = pd.read_csv(os.path.join(RecontructPath, (stockCode + '.csv')), dtype = {'종목코드':np.str})
+            checkPath = os.path.join(RecontructPath, (stockCode + '.csv'))
+            if os.path.isfile(checkPath):
+                checkData = pd.read_csv(os.path.join(RecontructPath, (stockCode + '.csv')), dtype = {'종목코드':np.str})
 
-            if (checkData['날짜'] == int(Date)).any():
-                continue
+                if (checkData['날짜'] == int(Date)).any():
+                    continue
 
             if dataDictionary.has_key(stockCode) == False:
                 #print('No Value in Dictionary, Make Key Value Pair : ' + stockCode)
