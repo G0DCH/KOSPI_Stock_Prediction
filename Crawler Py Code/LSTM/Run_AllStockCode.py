@@ -23,6 +23,8 @@ pivotDatas = []
 
 codeTable = {}
 
+testCode = None
+
 def Hash(code):
     p = 31
     m = 1e9 + 9
@@ -60,9 +62,9 @@ def Normalize(dataList, stockCode):
 
     start = time.time()
 
-    if stockCode == '005930':
+    if stockCode == testCode:
         global pivotDatas
-        for window in dataList: #tqdm(dataList):
+        for window in tqdm(dataList):
             normalizedWindow = window.copy()
             pivot = window.copy()
             pivotDatas.append(pivot.iloc[0, 0])
@@ -178,7 +180,8 @@ def LoadData(window_Size):
 def LoadTestData(window_Size, fileName):
     start = time.time()
     print('Load Test Data Start')
-
+    global testCode
+    testCode = fileName.split('.')[0]
     PriceChangeDirName = 'PriceChangedData'
 
     path = os.path.dirname(os.path.abspath(__file__))
@@ -196,7 +199,7 @@ def LoadTestData(window_Size, fileName):
     windowSize = window_Size + 1
     
     result = []
-    for index in range(len(data) - windowSize + 1):
+    for index in tqdm(range(len(data) - windowSize + 1)):
         stockData = data[index : index + windowSize].copy()
         result.append(stockData)
 
@@ -214,7 +217,6 @@ def LoadTestData(window_Size, fileName):
     print('LoadTestData time : ' + str(timedelta(seconds = time.time() - start)))
 
     return [x_test, y_test]
-
 # 학습 모델 생성
 def BuildModel():
     model = Sequential()
