@@ -167,7 +167,7 @@ def Run():
     np.save(y_test_name, y_test)
     np.save(pivot_name, np.array(pivotDatas))
     
-    model.fit(x_train, y_train, batch_size=512, epochs=100, validation_split=0.05)
+    model.fit(x_train, y_train, batch_size=512, epochs=100, validation_split=0.05, verbose=2)
     model.save(fileName)
 
     from keras.models import load_model

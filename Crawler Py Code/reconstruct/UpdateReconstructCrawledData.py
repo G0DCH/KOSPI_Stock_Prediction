@@ -76,7 +76,11 @@ def UpdateReconstructCrawledData():
     for dataKey in dataDictionary:
         data = dataDictionary[dataKey]
         fileName = str(dataKey) + '.csv'
-        data.to_csv(os.path.join(RecontructPath, fileName), mode = 'a', header = False, index = False)
+        tmpPath = os.path.join(RecontructPath, fileName)
+        if os.path.isfile(tmpPath):
+            data.to_csv(tmpPath, mode = 'a', header = False, index = False)
+        else:
+            data.to_csv(tmpPath, header = True, index = False)
         #print(funcName + ' : ' + fileName)
 
     newDate = dataFileNameList[len(dataFileNameList) - 1].split('.')[0]
