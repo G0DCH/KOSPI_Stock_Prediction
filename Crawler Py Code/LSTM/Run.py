@@ -63,7 +63,7 @@ def Normalize(dataList):
 
 
 # 학습 데이터 셋 만듬
-def LoadData(window_Size):
+def LoadData(window_Size, fileName):
     
     start = time.time()
     print('Load Data Start')
@@ -74,13 +74,11 @@ def LoadData(window_Size):
     path = os.path.dirname(path)
 
     PriceChangePath = os.path.join(path, PriceChangeDirName)
-    dataFileNameList = os.listdir(PriceChangePath)
 
     result = []
     # 리스트에 window_Size 동안의 데이터를 추가함
-    #for dataFileName in dataFileNameList:
-    #    data = pd.read_csv(os.path.join(PriceChangePath, dataFileName))
-    data = pd.read_csv(os.path.join(PriceChangePath, '005930.csv'), \
+    stockCode = fileName.split('.')[0]
+    data = pd.read_csv(os.path.join(PriceChangePath, fileName), \
         dtype = {'날짜':np.int64, '종목코드':np.str, '종목명':np.str, \
             '현재가':np.int64, '시가총액':np.int64, '외인순매수거래량':np.int64, \
             '외인순매수거래대금':np.int64, '연기금순매수거래량':np.int64, '연기금순매수거래대금':np.int64})
@@ -135,7 +133,9 @@ def BuildModel():
 def Run():
     fileName = 'batch512_epoch100.h5'
 
-    x_train, y_train, x_test, y_test = LoadData(50)
+    codeFileName = '005930.csv'
+
+    x_train, y_train, x_test, y_test = LoadData(50, codeFileName)
     model = BuildModel()
     
     model.fit(x_train, y_train, batch_size=512, epochs=100, validation_split=0.05, verbose=2)

@@ -92,12 +92,9 @@ def LoadData(window_Size, fileName):
     path = os.path.dirname(path)
 
     PriceChangePath = os.path.join(path, PriceChangeDirName)
-    dataFileNameList = os.listdir(PriceChangePath)
 
     result = []
     # 리스트에 window_Size 동안의 데이터를 추가함
-    #for dataFileName in dataFileNameList:
-    #    data = pd.read_csv(os.path.join(PriceChangePath, dataFileName))
     stockCode = fileName.split('.')[0]
     data = pd.read_csv(os.path.join(PriceChangePath, fileName), \
         dtype = {'날짜':np.int64, '종목코드':np.str, '종목명':np.str, \
