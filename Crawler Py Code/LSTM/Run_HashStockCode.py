@@ -175,6 +175,21 @@ def Run():
     model = load_model(fileName)
 
     dateLength = 11
+    tmpData = pd.read_csv('/home/chlee/KOSPI_Prediction/PriceChangedData/005930.csv')
+    tmpDate = tmpData['날짜']
+    tmpDate = tmpDate[-dateLength:].values
+    tmpDate = np.append(tmpDate, [tmpDate[-1] + 1])
+
+    import datetime
+    tmp = []
+    for i in range(tmpDate.shape[0]):
+        tmp.append(np.datetime64(datetime.datetime.strptime(str(tmpDate[i]), "%Y%m%d"), 'D'))
+        
+    tmp = np.array(tmp)
+
+    from pandas.plotting import register_matplotlib_converters
+    register_matplotlib_converters()
+
     x_test2 = x_test[-(dateLength + 1):]
     y_test2 = (y_test[-dateLength:].astype(np.float64) + 1) * pivotDatas[-dateLength:]
     pred = model.predict(x_test2)
@@ -183,8 +198,9 @@ def Run():
         result_predict.append((pred[i] + 1) * pivotDatas[i])
     print(result_predict[-1])
     plt.figure(facecolor = 'white')
-    plt.plot(y_test2, label='actual')
-    plt.plot(result_predict, label='prediction')
+    plt.plot(tmp[:-1], y_test2, label='actual')
+    plt.plot(tmp, result_predict, label='prediction')
+    plt.xticks(rotation = -45)
     plt.legend()
     plt.show()
 
