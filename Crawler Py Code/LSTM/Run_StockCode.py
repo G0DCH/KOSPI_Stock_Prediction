@@ -47,6 +47,21 @@ def Normalize(dataList, stockCode):
 
     return result
 
+def nanToZero(array, isTwo):
+tmpArray = array.copy()
+if isTwo:
+    for i in tqdm(range(tmpArray.shape[0])):
+        for j in range(tmpArray.shape[1]):
+            tmp = tmpArray[i, j, :].astype('float64')
+            tmpArray[i, j, np.isnan(tmp)] = 0
+            tmpArray[i, j, np.isinf(tmp)] = 0
+else:
+    tmpArray = tmpArray.astype('float64')
+    tmpArray[np.isnan(tmpArray)] = 0
+    tmpArray[np.isinf(tmpArray)] = 0
+
+return tmpArray
+
 
 # 학습 데이터 셋 만듬
 def LoadData(window_Size):

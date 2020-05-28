@@ -39,6 +39,21 @@ def Hash(code):
 
 pivotCode = Hash('000010')
 
+def nanToZero(array, isTwo):
+    tmpArray = array.copy()
+    if isTwo:
+        for i in tqdm(range(tmpArray.shape[0])):
+            for j in range(tmpArray.shape[1]):
+                tmp = tmpArray[i, j, :].astype('float64')
+                tmpArray[i, j, np.isnan(tmp)] = 0
+                tmpArray[i, j, np.isinf(tmp)] = 0
+    else:
+        tmpArray = tmpArray.astype('float64')
+        tmpArray[np.isnan(tmpArray)] = 0
+        tmpArray[np.isinf(tmpArray)] = 0
+
+    return tmpArray
+
 # 입력 받은 데이터를 정규화함
 def Normalize(dataList, stockCode):
     normalizedDatas = []
@@ -66,7 +81,7 @@ def Normalize(dataList, stockCode):
     return result
 
 # 학습 데이터 셋 만듬
-def LoadData(window_Size):
+def LoadData(window_Size, fileName):
     
     start = time.time()
     print('Load Data Start')
@@ -83,8 +98,8 @@ def LoadData(window_Size):
     # 리스트에 window_Size 동안의 데이터를 추가함
     #for dataFileName in dataFileNameList:
     #    data = pd.read_csv(os.path.join(PriceChangePath, dataFileName))
-    stockCode = '005930.csv'.split('.')[0]
-    data = pd.read_csv(os.path.join(PriceChangePath, '005930.csv'), \
+    stockCode = fileName.split('.')[0]
+    data = pd.read_csv(os.path.join(PriceChangePath, fileName), \
         dtype = {'날짜':np.int64, '종목코드':np.str, '종목명':np.str, \
             '현재가':np.int64, '시가총액':np.int64, '외인순매수거래량':np.int64, \
             '외인순매수거래대금':np.int64, '연기금순매수거래량':np.int64, '연기금순매수거래대금':np.int64})
@@ -138,7 +153,9 @@ def BuildModel():
 def Run():
     fileName = 'hash_stock_batch512_epoch100.h5'
 
-    x_train, y_train, x_test, y_test = LoadData(50)
+    codeFileName = '005930.csv'
+
+    x_train, y_train, x_test, y_test = LoadData(50, codeFileName)
     model = BuildModel()
 
     dirName = 'NPYHashStockCode'
@@ -175,7 +192,7 @@ def Run():
     model = load_model(fileName)
 
     dateLength = 11
-    tmpData = pd.read_csv('/home/chlee/KOSPI_Prediction/PriceChangedData/005930.csv')
+    tmpData = pd.read_csv(os.path.join('/home/chlee/KOSPI_Prediction/PriceChangedData', codeFileName))
     tmpDate = tmpData['날짜']
     tmpDate = tmpDate[-dateLength:].values
     tmpDate = np.append(tmpDate, [tmpDate[-1] + 1])
