@@ -107,7 +107,7 @@ def LoadData(window_Size, fileName, sectionLength):
     y_train = train[:, -sectionLength:, 0]
     x_test = result[row:, :-sectionLength]
     x_test = np.append(x_test, testStockData, axis = 0)
-    y_test = result[row:, -sectionLength, 0]
+    y_test = result[row:, -sectionLength:, 0]
 
     x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], x_train.shape[2]))
     x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1], x_test.shape[2]))
@@ -167,21 +167,27 @@ def Run():
         
     tmp = np.array(tmp)
 
+    y_tmp = y_test[:-1, 0].copy()
+    y_tmp2 = (y_tmp.astype(np.float64) + 1) * pivotDatas0[-(len(y_tmp) + 11):-11]
+    y_tmp = y_test[-1]
+    y_tmp2 = np.append(y_tmp2, (y_tmp.astype(np.float64) + 1) * pivotDatas0[-11])
+
     from pandas.plotting import register_matplotlib_converters
     register_matplotlib_converters()
 
-    x_test2 = x_test[-(dateLength + 1):]
-    y_test2 = (y_test[-dateLength:].astype(np.float64) + 1) * pivotDatas[-dateLength:]
+    x_test2 = x_test[-(dateLength):]
+    y_test2 = y_tmp2[-dateLength:]
     pred = model.predict(x_test2)
     result_predict = []
     for i in range(-len(pred), 0):
         result_predict.append((pred[i] + 1) * pivotDatas0[i])
-    #print(result_predict[-1])
     plt.figure(facecolor = 'white')
     plt.plot(tmp, y_test2, label='actual')
+    print(result_predict[-1])
+    print(y_test2[-1])
     for i in range(len(result_predict)):
+        plt.plot(tmp[:10], result_predict[i])
         tmp = np.append(tmp[1:], np.datetime64(tmp[-1].astype(datetime.datetime) + datetime.timedelta(days = 1), 'D'))
-        plt.plot(tmp, result_predict[i], label='prediction' + str(i))
     plt.xticks(rotation = -45)
     plt.legend()
     plt.show()
