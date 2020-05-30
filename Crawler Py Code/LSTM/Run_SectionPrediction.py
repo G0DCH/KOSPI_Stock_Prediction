@@ -23,7 +23,7 @@ pivotDatas = []
 def nanToZero(array, isTwo):
     tmpArray = array.copy()
     if isTwo:
-        for i in tqdm(range(tmpArray.shape[0])):
+        for i in range(tmpArray.shape[0]):
             for j in range(tmpArray.shape[1]):
                 tmp = tmpArray[i, j, :].astype('float64')
                 tmpArray[i, j, np.isnan(tmp)] = 0
@@ -43,7 +43,7 @@ def Normalize(dataList):
     print('Normalize Start')
     global pivotDatas
 
-    for window in tqdm(dataList):
+    for window in dataList:
         normalizedWindow = window.copy()
         pivot = window.copy()
         pivotDatas.append(pivot.iloc[0, 0])
@@ -134,7 +134,7 @@ def BuildModel():
     return model
 
 def Run():
-    fileName = 'batch512_epoch100.h5'
+    fileName = 'Section_batch512_epoch100.h5'
 
     codeFileName = '005930.csv'
 
@@ -191,6 +191,24 @@ def Run():
     plt.xticks(rotation = -45)
     plt.legend()
     plt.show()
+
+def fitModel(window_Size, fileName, sectionLength):
+    fileName = "{}_win{}_sec{}.h5".format(fileName.split('.')[0], window_Size, sectionLength)
+
+    x_train0, y_train0, x_test0, y_test0 = LoadData(50, fileName, 10)
+
+    x_train = nanToZero(x_train0, True)
+    y_train = nanToZero(y_train0, False)
+    x_test = nanToZero(x_test0, True)
+    y_test = nanToZero(y_test0, False)
+    pivotDatas0 = nanToZero(np.array(pivotDatas), False)
+
+    model = BuildModel()
+    
+    model.fit(x_train, y_train, batch_size=512, epochs=100, validation_split=0.05, verbose=2)
+    model.save(fileName)
+
+    return model
 
 if __name__ == "__main__":
     Run()
