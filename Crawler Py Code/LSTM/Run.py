@@ -95,6 +95,10 @@ def LoadData(window_Size, fileName):
     stockData = Normalize([stockData])
     result = Normalize(result)
 
+    # 너무 짧아서 정규화가 안된 경우
+    if (result.shape[0] == 0) == True:
+        return [None, None, None, None]
+
     # 90퍼센트는 train용 10퍼센트는 validate용으로 씀
     row = int(round(result.shape[0] * 0.9))
     train = result[:row, :]

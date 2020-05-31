@@ -98,6 +98,10 @@ def LoadData(window_Size, fileName, sectionLength):
     result = Normalize(result)
     testStockData = Normalize(testStockData)
 
+    # 너무 짧아서 정규화가 안된 경우
+    if (result.shape[0] == 0) == True:
+        return [None, None, None, None]
+
     # 90퍼센트는 train용 10퍼센트는 validate용으로 씀
     row = int(round(result.shape[0] * 0.9))
     train = result[:row, :]
@@ -193,9 +197,19 @@ def Run():
     plt.show()
 
 def fitModel(window_Size, fileName, sectionLength):
+    path = os.path.dirname(os.path.abspath(__file__))
+    sectionPath = os.path.join(path, 'SectionPredict')
+
     fileName = "{}_win{}_sec{}.h5".format(fileName.split('.')[0], window_Size, sectionLength)
 
     x_train0, y_train0, x_test0, y_test0 = LoadData(50, fileName, 10)
+
+    noneCheck = (type(x_train0) == None) or (type(y_train0) == None) or \
+            (type(x_test0) == None) or (type(y_test0) == None)
+
+    # 너무 짧아서 정규화가 안된 경우
+    if noneCheck:
+        return
 
     x_train = nanToZero(x_train0, True)
     y_train = nanToZero(y_train0, False)
@@ -206,7 +220,9 @@ def fitModel(window_Size, fileName, sectionLength):
     model = BuildModel()
     
     model.fit(x_train, y_train, batch_size=512, epochs=100, validation_split=0.05, verbose=2)
-    model.save(fileName)
+    model.save(os.path.join(sectionPath, fileName))
+
+    print("{fileName} Done.")
 
     return model
 

@@ -3,10 +3,7 @@
 from Run import *
 from Run_SectionPrediction import fitModel
 
-def AppendRun():
-    codeFileName = '051900.csv'
-    window_Size = 50
-    sectionLength = 10
+def AppendRun(window_Size, codeFileName, sectionLength):
 
     fileName = '{}.h5'.format(codeFileName.split('.')[0])
     appendFileName = "{}_win{}_sec{}.h5".format(codeFileName.split('.')[0], window_Size, sectionLength)
@@ -69,6 +66,49 @@ def AppendRun():
     plt.legend()
     plt.show()
 
+def AppendMakeModel(window_Size, codeFileName, sectionLength):
+    path = os.path.dirname(os.path.abspath(__file__))
+    onePath = os.path.join(path, 'OneDayPredict')
+    sectionPath = os.path.join(path, 'SectionPredict')
+
+    if os.path.isdir(onePath) == False:
+        print("No Directory : " + onePath)
+        print("Make Directory : " + onePath)
+        os.makedirs(onePath)
+
+    if os.path.isdir(sectionPath) == False:
+        print("No Directory : " + sectionPath)
+        print("Make Directory : " + sectionPath)
+        os.makedirs(sectionPath)
+    fileName = '{}.h5'.format(codeFileName.split('.')[0])
+    appendFileName = "{}_win{}_sec{}.h5".format(codeFileName.split('.')[0], window_Size, sectionLength)
+
+    x_train0, y_train0, x_test0, y_test0 = LoadData(50, codeFileName)
+
+    noneCheck = (type(x_train0) == None) or (type(y_train0) == None) or \
+                (type(x_test0) == None) or (type(y_test0) == None)
+
+    # 너무 짧아서 정규화가 안된 경우
+    if noneCheck:
+        return
+
+    x_train = nanToZero(x_train0, True)
+    y_train = nanToZero(y_train0, False)
+    x_test = nanToZero(x_test0, True)
+    y_test = nanToZero(y_test0, False)
+    pivotDatas0 = nanToZero(np.array(pivotDatas), False)
+
+    model = BuildModel()
+
+    model.fit(x_train, y_train, batch_size=512, epochs=100, validation_split=0.05, verbose = 2)
+    model.save(os.path.join(onePath, fileName))
+
+    print('{fileName} Done')
+    #model = load_model(fileName)
+
+    if os.path.isfile(os.path.join(sectionPath, appendFileName)) == False:
+        fitModel(window_Size, codeFileName, sectionLength)
+
 if __name__ == "__main__":
-    Run()
+    AppendRun(50, '005930.csv', 10)
     print('Run time : ' + str(timedelta(seconds = time.time() - start)))
