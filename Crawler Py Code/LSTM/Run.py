@@ -97,6 +97,8 @@ def LoadData(window_Size, fileName):
 
     # 너무 짧아서 정규화가 안된 경우
     if (result.shape[0] == 0) == True:
+        print('Short!!!!! {} LoadData Finished'.format(fileName))
+        print('{} LoadData time : {}'.format(fileName, str(timedelta(seconds = time.time() - start))))
         return [None, None, None, None]
 
     # 90퍼센트는 train용 10퍼센트는 validate용으로 씀
@@ -113,8 +115,8 @@ def LoadData(window_Size, fileName):
     x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], x_train.shape[2]))
     x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1], x_test.shape[2]))
 
-    print('LoadData Finished')
-    print('LoadData time : ' + str(timedelta(seconds = time.time() - start)))
+    print('{} LoadData Finished'.format(fileName))
+    print('{} LoadData time : {}'.format(fileName, str(timedelta(seconds = time.time() - start))))
 
     return [x_train, y_train, x_test, y_test]
 
