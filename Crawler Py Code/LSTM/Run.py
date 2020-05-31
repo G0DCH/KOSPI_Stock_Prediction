@@ -25,7 +25,7 @@ pivotDatas = []
 def nanToZero(array, isTwo):
     tmpArray = array.copy()
     if isTwo:
-        for i in tqdm(range(tmpArray.shape[0])):
+        for i in range(tmpArray.shape[0]):
             for j in range(tmpArray.shape[1]):
                 tmp = tmpArray[i, j, :].astype('float64')
                 tmpArray[i, j, np.isnan(tmp)] = 0
@@ -41,14 +41,14 @@ def nanToZero(array, isTwo):
 def Normalize(dataList):
     normalizedDatas = []
 
-    start = time.time()
-    print('Normalize Start')
-    global pivotDatas
+    #start = time.time()
+    #print('Normalize Start')
+    #global pivotDatas
 
-    for window in tqdm(dataList):
+    for window in dataList:
         normalizedWindow = window.copy()
         pivot = window.copy()
-        pivotDatas.append(pivot.iloc[0, 0])
+        #pivotDatas.append(pivot.iloc[0, 0])
         for i in range(len(pivot)):
             pivot.iloc[i] = pivot.iloc[0]
         normalizedWindow.loc[:] = window.loc[:] / pivot[:] - 1
@@ -56,8 +56,8 @@ def Normalize(dataList):
 
     result = np.array(normalizedDatas)
 
-    print('Normalize Finished')
-    print('Normalized time : ' + str(timedelta(seconds = time.time() - start)))
+    #print('Normalize Finished')
+    #print('Normalized time : ' + str(timedelta(seconds = time.time() - start)))
 
     return result
 
@@ -66,7 +66,7 @@ def Normalize(dataList):
 def LoadData(window_Size, fileName):
     
     start = time.time()
-    print('Load Data Start')
+    print('{} Load Data Start'.format(fileName))
 
     PriceChangeDirName = 'PriceChangedData'
 
