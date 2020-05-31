@@ -196,13 +196,13 @@ def Run():
     plt.legend()
     plt.show()
 
-def fitModel(window_Size, fileName, sectionLength):
+def fitModel(window_Size, codeFileName, sectionLength):
     path = os.path.dirname(os.path.abspath(__file__))
     sectionPath = os.path.join(path, 'SectionPredict')
 
-    fileName = "{}_win{}_sec{}.h5".format(fileName.split('.')[0], window_Size, sectionLength)
+    fileName = "{}_win{}_sec{}.h5".format(codeFileName.split('.')[0], window_Size, sectionLength)
 
-    x_train0, y_train0, x_test0, y_test0 = LoadData(50, fileName, 10)
+    x_train0, y_train0, x_test0, y_test0 = LoadData(50, codeFileName, 10)
 
     noneCheck = (type(x_train0) == None) or (type(y_train0) == None) or \
             (type(x_test0) == None) or (type(y_test0) == None)
@@ -222,7 +222,7 @@ def fitModel(window_Size, fileName, sectionLength):
     model.fit(x_train, y_train, batch_size=512, epochs=100, validation_split=0.05, verbose=2)
     model.save(os.path.join(sectionPath, fileName))
 
-    print("{fileName} Done.")
+    print("{} Done.".format(fileName))
 
     return model
 

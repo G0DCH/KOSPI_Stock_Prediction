@@ -103,7 +103,7 @@ def AppendMakeModel(window_Size, codeFileName, sectionLength):
     model.fit(x_train, y_train, batch_size=512, epochs=100, validation_split=0.05, verbose = 2)
     model.save(os.path.join(onePath, fileName))
 
-    print('{fileName} Done')
+    print('{} Done'.format(fileName))
     #model = load_model(fileName)
 
     if os.path.isfile(os.path.join(sectionPath, appendFileName)) == False:
