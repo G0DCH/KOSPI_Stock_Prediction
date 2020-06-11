@@ -2,6 +2,6 @@
 /Crawler Py Code/ForeignerCrawledData/*
 /Crawler Py Code/NPSCrawledData/*
 /Crawler Py Code/ReconstructedCrawledData/*
-/Crawler Py Code/LSTM/SaveToDB/DBInfo.py
+Crawler Py Code/LSTM/SaveToDB/DBInfo.py
 
 *.pyc
