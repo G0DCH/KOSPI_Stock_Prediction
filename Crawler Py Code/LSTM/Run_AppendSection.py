@@ -5,29 +5,33 @@ from Run_SectionPrediction import fitModel
 
 def AppendRun(window_Size, codeFileName, sectionLength):
 
+    path = os.path.dirname(os.path.abspath(__file__))
+    onePath = os.path.join(path, 'OneDayPredict')
+    sectionPath = os.path.join(path, 'SectionPredict')
+
     fileName = '{}.h5'.format(codeFileName.split('.')[0])
     appendFileName = "{}_win{}_sec{}.h5".format(codeFileName.split('.')[0], window_Size, sectionLength)
 
     x_train0, y_train0, x_test0, y_test0 = LoadData(50, codeFileName)
 
-    x_train = nanToZero(x_train0, True)
-    y_train = nanToZero(y_train0, False)
+    #x_train = nanToZero(x_train0, True)
+    #y_train = nanToZero(y_train0, False)
     x_test = nanToZero(x_test0, True)
     y_test = nanToZero(y_test0, False)
     pivotDatas0 = nanToZero(np.array(pivotDatas), False)
 
-    model = BuildModel()
+    #model = BuildModel()
 
-    model.fit(x_train, y_train, batch_size=512, epochs=100, validation_split=0.05, verbose = 2)
-    model.save(fileName)
+    #model.fit(x_train, y_train, batch_size=512, epochs=100, validation_split=0.05, verbose = 2)
+    #model.save(fileName)
 
-    #from keras.models import load_model
+    from keras.models import load_model
 
-    #model = load_model(fileName)
-    #append_model = load_model(appendFileName)
+    model = load_model(os.path.join(onePath, fileName))
+    append_model = load_model(os.path.join(sectionPath, appendFileName))
 
     dateLength = 10
-    tmpData = pd.read_csv(os.path.join('/home/chlee/KOSPI_Prediction/PriceChangedData', codeFileName))
+    tmpData = pd.read_csv(os.path.join(os.path.dirname(path), 'PriceChangedData', codeFileName))
     tmpDate = tmpData['날짜']
     tmpDate = tmpDate[-dateLength:].values
 
