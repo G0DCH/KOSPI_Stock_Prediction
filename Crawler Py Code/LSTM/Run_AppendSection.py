@@ -113,6 +113,83 @@ def AppendMakeModel(window_Size, codeFileName, sectionLength):
     if os.path.isfile(os.path.join(sectionPath, appendFileName)) == False:
         fitModel(window_Size, codeFileName, sectionLength)
 
+def MakeCSV(window_Size, codeFileName, sectionLength):
+    path = os.path.dirname(os.path.abspath(__file__))
+    onePath = os.path.join(path, 'OneDayPredict')
+    sectionPath = os.path.join(path, 'SectionPredict')
+    predictCSVPath = os.path.join(os.path.dirname(path), 'PredictCSV')
+    csvName = 'Predict_{}'.format(codeFileName)
+
+    fileName = '{}.h5'.format(codeFileName.split('.')[0])
+    appendFileName = "{}_win{}_sec{}.h5".format(codeFileName.split('.')[0], window_Size, sectionLength)
+
+    x_train0, y_train0, x_test0, y_test0 = LoadData(50, codeFileName)
+
+    x_test = nanToZero(x_test0, True)
+    pivotDatas0 = nanToZero(np.array(pivotDatas), False)
+
+    from keras.models import load_model
+
+    model = load_model(os.path.join(onePath, fileName))
+    append_model = load_model(os.path.join(sectionPath, appendFileName))
+
+    dateLength = 10
+    tmpData = pd.read_csv(os.path.join(os.path.dirname(path), 'PriceChangedData', codeFileName))
+    tmpDate = tmpData['날짜']
+    tmpDate = tmpDate[-dateLength:].values
+
+    import datetime
+    tmp = []
+    for i in range(tmpDate.shape[0]):
+        tmp.append(np.datetime64(datetime.datetime.strptime(str(tmpDate[i]), "%Y%m%d"), 'D'))
+        
+    for i in range(sectionLength):
+        tmp.append(np.datetime64(tmp[-1].astype(datetime.datetime) + datetime.timedelta(days = 1), 'D'))
+        
+    tmp = np.array(tmp)
+
+    from pandas.plotting import register_matplotlib_converters
+    register_matplotlib_converters()
+
+    x_test2 = x_test[-(dateLength + 1):-1]
+    append_x_test = x_test[-2:]
+    pred = model.predict(x_test2)
+    pred2 = append_model.predict(append_x_test)
+    pred2 = pred2[-1]
+    result_predict = []
+    for i in range(-len(pred), 0):
+        result_predict.append(int((pred[i] + 1) * pivotDatas0[i - 1]))
+
+    for pred2Data in pred2:
+        result_predict.append(int((pred2Data + 1) * pivotDatas0[-1]))
+
+    if os.path.isdir(predictCSVPath) == False:
+        os.mkdir(predictCSVPath)
+    
+    column = ['종목코드', '날짜', '예측가']
+
+    dates = []
+
+    for date in tmp:
+        dates.append(np.int64(pd.to_datetime(date).strftime("%Y%m%d")))
+
+    dates = np.array(dates)
+    
+    predictData = pd.DataFrame(\
+        np.array([[codeFileName.split('.')[0]]*dates.shape[0], dates, result_predict]).T, \
+            columns = column)
+
+    data = pd.DataFrame(columns = column)
+    csvFilePath = os.path.join(predictCSVPath, csvName)
+    if os.path.isfile(csvFilePath) == True:
+        data = pd.read_csv(csvFilePath, \
+            dtype = {'종목코드':np.str, '날짜':np.int64, '예측가':np.int64})
+        data = data.iloc[data['날짜'] <= dates[0]]
+    
+    data = data.append(predictData)
+
+    data.to_csv(csvFilePath, header = False, index = False)
+
 if __name__ == "__main__":
     AppendRun(50, '005930.csv', 10)
     print('Run time : ' + str(timedelta(seconds = time.time() - start)))
