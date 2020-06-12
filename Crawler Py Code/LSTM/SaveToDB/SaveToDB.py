@@ -71,28 +71,29 @@ def MakeTable(conn, code):
         print('Make {} Table Done'.format(code))
         pass
 
-try:
-    with conn.cursor() as cursor:
-        sql = 'USE {}'.format(DBInfo.db)
-        cursor.execute(sql)
-        cursor.fetchall()
-except:
-    MakeDB(conn)
-finally:
+def Init():
     try:
         with conn.cursor() as cursor:
-            sql = 'SELECT DATABASE()'
+            sql = 'USE {}'.format(DBInfo.db)
             cursor.execute(sql)
-            result = cursor.fetchall()
-            print(result)
+            cursor.fetchall()
+    except:
+        MakeDB(conn)
     finally:
-            pass
+        try:
+            with conn.cursor() as cursor:
+                sql = 'SELECT DATABASE()'
+                cursor.execute(sql)
+                result = cursor.fetchall()
+                print(result)
+        finally:
+                pass
 
-    try:
-        MakeTable(conn, '005930')
-    finally:
-        sql = 'select * from {}'.format('Price_{}'.format('005930'))
-        result = pd.read_sql_query(sql, conn)
-        print(result)
-        pass
-    conn.close()
+        try:
+            MakeTable(conn, '005930')
+        finally:
+            sql = 'select * from {}'.format('Price_{}'.format('005930'))
+            result = pd.read_sql_query(sql, conn)
+            print(result)
+            pass
+        conn.close()
