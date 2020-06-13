@@ -2,6 +2,8 @@
 
 from Run import *
 from Run_SectionPrediction import fitModel
+from keras.models import load_model
+from pandas.plotting import register_matplotlib_converters
 
 def AppendRun(window_Size, codeFileName, sectionLength):
 
@@ -128,8 +130,6 @@ def MakeCSV(window_Size, codeFileName, sectionLength):
     x_test = nanToZero(x_test0, True)
     pivotDatas0 = nanToZero(np.array(pivotDatas), False)
 
-    from keras.models import load_model
-
     model = load_model(os.path.join(onePath, fileName))
     append_model = load_model(os.path.join(sectionPath, appendFileName))
 
@@ -148,7 +148,6 @@ def MakeCSV(window_Size, codeFileName, sectionLength):
         
     tmp = np.array(tmp)
 
-    from pandas.plotting import register_matplotlib_converters
     register_matplotlib_converters()
 
     x_test2 = x_test[-(dateLength + 1):-1]

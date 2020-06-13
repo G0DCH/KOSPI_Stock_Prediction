@@ -37,7 +37,7 @@ def MakeAllPredict(window_Size, sectionLength):
             p2ArgName = processArgNameList.pop(0)
             p2.join()
             i += 1
-            print("{}/{} : {}".format(i, len(dataFileNameList), p2ArgName))
+            print("{}/{} : {}".format(i, crawledData.shape[0], p2ArgName))
             p.start()
             processList.append(p)
             processArgNameList.append(dataFileName)
@@ -46,7 +46,7 @@ def MakeAllPredict(window_Size, sectionLength):
         p.join()
         tArgName = processArgNameList.pop(0)
         i += 1
-        print("{}/{} : {}".format(i, len(dataFileNameList), tArgName))
+        print("{}/{} : {}".format(i, crawledData.shape[0], tArgName))
 
     print('MakeAllPredict Finished')
     print('MakeAllPredict time : ' + str(timedelta(seconds = time.time() - start)))

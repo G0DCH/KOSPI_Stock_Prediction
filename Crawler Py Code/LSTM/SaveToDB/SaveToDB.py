@@ -68,7 +68,7 @@ def InitTable(tableType):
                 UploadCSV(tableType)
 
             elif tableType == PRICE:
-                for code in tqdm(crawledData['종목코드']):
+                for code in crawledData['종목코드']:
                     fileName = code + '.csv'
                     data = pd.read_csv(os.path.join(PriceChangePath, fileName), \
                         dtype = {'날짜':np.int64, '종목코드':np.str, '종목명':np.str, \
@@ -81,18 +81,22 @@ def InitTable(tableType):
                     # csv 파일을 db에 업로드
                     UploadCSV(tableType)
             elif tableType == PREDICT:
-                for code in tqdm(crawledData['종목코드']):
+                for code in crawledData['종목코드']:
                     fileName = 'Predict_{}.csv'.format(code)
-                    try:
-                        import shutil
-                        shutil.copyfile(os.path.join(predictPath, fileName), os.path.join(os.path.join(path, tmpFileName)))
+                    try:                        
+                        data = pd.read_csv(os.path.join(predictPath, fileName),\
+                            dtype = {'종목코드':np.str, '날짜':np.int64, '예측가':np.int64})
+                        
+                        data.to_csv(os.path.join(path, tmpFileName), header = False, index = False)
                         UploadCSV(tableType)
                     except IOError as e:
                         print(e)
-                    #data = pd.read_csv(os.path.join(predictPath, fileName),\
-                    #    dtype = {'종목코드':np.str, '날짜':np.int64, '예측가':np.int64})
-                    
-                    #data.to_csv(os.path.join(path, tmpFileName), header = False, index = False)
+                    # try:
+                    #     import shutil
+                    #     shutil.copyfile(os.path.join(predictPath, fileName), os.path.join(os.path.join(path, tmpFileName)))
+                    #     UploadCSV(tableType)
+                    # except IOError as e:
+                    #     print(e)
             else:
                 raise ValueError('{} is not correct table Name'.format(tableType))
             os.remove(os.path.join(path, tmpFileName))
@@ -104,7 +108,7 @@ def InitTable(tableType):
 
 # 테이블 생성
 def MakeTable(tableType):
-    try:
+    #try:
         with conn.cursor() as cursor:
             sql = "SHOW TABLES LIKE '{}'".format(tableType)
             cursor.execute(sql)
@@ -117,7 +121,7 @@ def MakeTable(tableType):
 
             if tableType == NAME:
                 sql = 'CREATE TABLE {} (\
-                        Code char(6) NOT NULL, \
+                        Code char(6) NOT NULL PRIMARY KEY, \
                         Name varchar(30) NOT NULL) \
                         default charset=utf8mb4'.format(tableType)
                 cursor.execute(sql)
@@ -125,23 +129,26 @@ def MakeTable(tableType):
                 sql = 'CREATE TABLE {} (\
                     Code char(6) NOT NULL, \
                     MarketDate date NOT NULL, \
-                    Price int NOT NULL) \
+                    Price int NOT NULL, \
+                    PRIMARY KEY(Code, MarketDate)) \
                     default charset=utf8mb4'.format(tableType)
                 cursor.execute(sql)
             elif tableType == PREDICT:
                 sql = 'CREATE TABLE {} (\
                     Code char(6) NOT NULL, \
                     MarketDate date NOT NULL, \
-                    PredictPrice int NOT NULL) \
+                    PredictPrice int NOT NULL, \
+                    PRIMARY KEY(Code, MarketDate)) \
                     default charset=utf8mb4'.format(tableType)
                 cursor.execute(sql)
             else:
                 raise ValueError('{} is not correct table Name'.format(tableType))
         conn.commit()
-    except:
-        print('Make Table Failed')
-    finally:
-        pass
+        InitTable(tableType)
+    #except:
+    #    print('Make Table Failed')
+    #finally:
+    #    pass
 
 def Init():
     try:
@@ -164,3 +171,19 @@ def Init():
 def CloseDB():
     conn.close()
     print('DB Closed')
+
+def SaveToDB():
+    import time
+    from datetime import timedelta
+    start = time.time()
+    print('Save To DB Start')
+    Init()
+    MakeTable(NAME)
+    MakeTable(PRICE)
+    MakeTable(PREDICT)
+    CloseDB()
+    print('Save To DB time : ' + str(timedelta(seconds = time.time() - start)))
+
+if __name__ == "__main__":
+    SaveToDB()
+    pass

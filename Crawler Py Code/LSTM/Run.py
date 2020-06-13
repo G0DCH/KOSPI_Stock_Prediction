@@ -41,11 +41,11 @@ def nanToZero(array, isTwo):
 def Normalize(dataList):
     normalizedDatas = []
 
-    start = time.time()
-    print('Normalize Start')
+    #start = time.time()
+    #print('Normalize Start')
     global pivotDatas
 
-    for window in tqdm(dataList):
+    for window in dataList:
         normalizedWindow = window.copy()
         pivot = window.copy()
         pivotDatas.append(pivot.iloc[0, 0])
@@ -56,8 +56,8 @@ def Normalize(dataList):
 
     result = np.array(normalizedDatas)
 
-    print('Normalize Finished')
-    print('Normalized time : ' + str(timedelta(seconds = time.time() - start)))
+    #print('Normalize Finished')
+    #print('Normalized time : ' + str(timedelta(seconds = time.time() - start)))
 
     return result
 
@@ -66,7 +66,7 @@ def Normalize(dataList):
 def LoadData(window_Size, fileName):
     
     start = time.time()
-    print('{} Load Data Start'.format(fileName))
+    #print('{} Load Data Start'.format(fileName))
 
     PriceChangeDirName = 'PriceChangedData'
 
@@ -115,8 +115,8 @@ def LoadData(window_Size, fileName):
     x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], x_train.shape[2]))
     x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1], x_test.shape[2]))
 
-    print('{} LoadData Finished'.format(fileName))
-    print('{} LoadData time : {}'.format(fileName, str(timedelta(seconds = time.time() - start))))
+    #print('{} LoadData Finished'.format(fileName))
+    #print('{} LoadData time : {}'.format(fileName, str(timedelta(seconds = time.time() - start))))
 
     return [x_train, y_train, x_test, y_test]
 
@@ -173,7 +173,7 @@ def Run():
     result_predict = []
     for i in range(-len(pred), 0):
         result_predict.append((pred[i] + 1) * pivotDatas[i])
-    print(result_predict[-1])
+    #print(result_predict[-1])
     plt.figure(facecolor = 'white')
     plt.plot(tmp[:-1], y_test2, label='actual')
     plt.plot(tmp, result_predict, label='prediction')
@@ -183,4 +183,4 @@ def Run():
 
 if __name__ == "__main__":
     Run()
-    print('Run time : ' + str(timedelta(seconds = time.time() - start)))
+    #print('Run time : ' + str(timedelta(seconds = time.time() - start)))
