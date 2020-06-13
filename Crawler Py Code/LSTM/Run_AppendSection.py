@@ -188,7 +188,7 @@ def MakeCSV(window_Size, codeFileName, sectionLength):
     
     data = data.append(predictData)
 
-    data.to_csv(csvFilePath, header = False, index = False)
+    data.to_csv(csvFilePath, header = True, index = False)
 
 if __name__ == "__main__":
     AppendRun(50, '005930.csv', 10)

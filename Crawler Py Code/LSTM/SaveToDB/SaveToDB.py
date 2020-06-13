@@ -4,6 +4,7 @@ import pymysql
 import os
 import pandas as pd
 import numpy as np
+from tqdm import tqdm
 
 # DBInfo.py 파일을 작성한 뒤 사용
 # 파일은 다음과 같은 내용으로 작성해야 한다.
@@ -43,6 +44,7 @@ def InitTable(tableType):
             csvPath = os.path.dirname(os.path.dirname(path))
             PriceChangePath = os.path.join(csvPath, 'PriceChangedData')
             CrawledPath = os.path.join(csvPath, 'CrawledData')
+            predictPath = os.path.join(csvPath, 'PredictCSV')
             nameList = os.listdir(CrawledPath)
             nameList.sort()
             crawledFileName = nameList[-1]
@@ -66,7 +68,6 @@ def InitTable(tableType):
                 UploadCSV(tableType)
 
             elif tableType == PRICE:
-                from tqdm import tqdm
                 for code in tqdm(crawledData['종목코드']):
                     fileName = code + '.csv'
                     data = pd.read_csv(os.path.join(PriceChangePath, fileName), \
@@ -79,9 +80,23 @@ def InitTable(tableType):
 
                     # csv 파일을 db에 업로드
                     UploadCSV(tableType)
+            elif tableType == PREDICT:
+                for code in tqdm(crawledData['종목코드']):
+                    fileName = 'Predict_{}.csv'.format(code)
+                    import shutil
+                    shutil.copyfile(os.path.join(predictPath, fileName), os.path.join(path, tmpFileName))
 
+                    UploadCSV(tableType)
+                    #data = pd.read_csv(os.path.join(predictPath, fileName),\
+                    #    dtype = {'종목코드':np.str, '날짜':np.int64, '예측가':np.int64})
+                    
+                    #data.to_csv(os.path.join(path, tmpFileName), header = False, index = False)
+            else:
+                raise ValueError('{} is not correct table Name'.format(tableType))
             os.remove(os.path.join(path, tmpFileName))
         conn.commit()
+    except:
+        print('Init Table Failed')
     finally:
         pass
 
