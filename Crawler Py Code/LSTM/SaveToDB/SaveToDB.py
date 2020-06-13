@@ -83,10 +83,12 @@ def InitTable(tableType):
             elif tableType == PREDICT:
                 for code in tqdm(crawledData['종목코드']):
                     fileName = 'Predict_{}.csv'.format(code)
-                    import shutil
-                    shutil.copyfile(os.path.join(predictPath, fileName), os.path.join(path, tmpFileName))
-
-                    UploadCSV(tableType)
+                    try:
+                        import shutil
+                        shutil.copyfile(os.path.join(predictPath, fileName), os.path.join(os.path.join(path, tmpFileName)))
+                        UploadCSV(tableType)
+                    except IOError as e:
+                        print(e)
                     #data = pd.read_csv(os.path.join(predictPath, fileName),\
                     #    dtype = {'종목코드':np.str, '날짜':np.int64, '예측가':np.int64})
                     
@@ -104,6 +106,15 @@ def InitTable(tableType):
 def MakeTable(tableType):
     try:
         with conn.cursor() as cursor:
+            sql = "SHOW TABLES LIKE '{}'".format(tableType)
+            cursor.execute(sql)
+            result = cursor.fetchall()
+
+            if len(result) > 0:
+                sql = 'DROP TABLE {}'.format(tableType)
+                cursor.execute(sql)
+                result = cursor.fetchall()
+
             if tableType == NAME:
                 sql = 'CREATE TABLE {} (\
                         Code char(6) NOT NULL, \
