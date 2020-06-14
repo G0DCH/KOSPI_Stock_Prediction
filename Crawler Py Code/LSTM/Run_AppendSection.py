@@ -166,17 +166,19 @@ def MakeCSV(window_Size, codeFileName, sectionLength):
     for pred2Data in pred2:
         result_predict.append(int((pred2Data + 1) * pivotDatas0[-1]))
 
+    plt.rcParams['axes.grid'] = True
+
     plt.figure(facecolor = 'white')
     plt.title(codeFileName.split('.')[0])
     plt.plot(tmp[:-sectionLength], y_test2, label='actual')
     plt.plot(tmp, result_predict, label='prediction', linestyle='--', marker='.')
-    plt.xticks(rotation = -45)
+    plt.xticks(rotation = -45, size = 5)
     plt.legend()
 
     if os.path.isdir(predictPNGPath) == False:
         os.mkdir(predictPNGPath)
 
-    plt.savefig(os.path.join(predictPNGPath, PredictPNG), dpi=300)
+    plt.savefig(os.path.join(predictPNGPath, pngName), dpi=300)
 
     if os.path.isdir(predictCSVPath) == False:
         os.mkdir(predictCSVPath)
@@ -199,7 +201,7 @@ def MakeCSV(window_Size, codeFileName, sectionLength):
     if os.path.isfile(csvFilePath) == True:
         data = pd.read_csv(csvFilePath, \
             dtype = {'종목코드':np.str, '날짜':np.int64, '예측가':np.int64})
-        data = data.iloc[data['날짜'] <= dates[0]]
+        data = data.loc[data['날짜'] <= dates[0]]
     
     data = data.append(predictData)
 
