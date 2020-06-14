@@ -146,6 +146,8 @@ def LoadTestData(testlength, window_Size, fileName):
             '현재가':np.int64, '시가총액':np.int64, '외인순매수거래량':np.int64, \
             '외인순매수거래대금':np.int64, '연기금순매수거래량':np.int64, '연기금순매수거래대금':np.int64})
 
+    stockName = data['종목명'][0]
+
     data = data.loc[:, ['현재가', '외인순매수거래량', 
         '외인순매수거래대금', '연기금순매수거래량', '연기금순매수거래대금']]
     windowSize = window_Size + 1
@@ -169,7 +171,7 @@ def LoadTestData(testlength, window_Size, fileName):
     x_test = np.append(x_test, stockData, axis = 0)
     x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1], x_test.shape[2]))
 
-    return [x_test, y_test]
+    return [x_test, y_test, stockName]
 
 
 # 학습 모델 생성

@@ -127,7 +127,7 @@ def MakeCSV(window_Size, codeFileName, sectionLength):
     fileName = '{}.h5'.format(codeFileName.split('.')[0])
     appendFileName = "{}_win{}_sec{}.h5".format(codeFileName.split('.')[0], window_Size, sectionLength)
 
-    x_test0, y_test0 = LoadTestData(100, 50, codeFileName)
+    x_test0, y_test0, stockName = LoadTestData(100, 50, codeFileName)
 
     x_test = nanToZero(x_test0, True)
     y_test = nanToZero(y_test0, False)
@@ -166,10 +166,15 @@ def MakeCSV(window_Size, codeFileName, sectionLength):
     for pred2Data in pred2:
         result_predict.append(int((pred2Data + 1) * pivotDatas0[-1]))
 
+    import sys
+    reload(sys)
+    sys.setdefaultencoding('utf8')
+
+    plt.rc('font', family='NanumGothic')
     plt.rcParams['axes.grid'] = True
 
     plt.figure(facecolor = 'white')
-    plt.title(codeFileName.split('.')[0])
+    plt.title('{}({})'.format(stockName, codeFileName.split('.')[0]))
     plt.plot(tmp[:-sectionLength], y_test2, label='actual')
     plt.plot(tmp, result_predict, label='prediction', linestyle='--', marker='.')
     plt.xticks(rotation = -45, size = 5)
