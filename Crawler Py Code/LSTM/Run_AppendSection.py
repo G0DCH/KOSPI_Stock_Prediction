@@ -120,14 +120,17 @@ def MakeCSV(window_Size, codeFileName, sectionLength):
     onePath = os.path.join(path, 'OneDayPredict')
     sectionPath = os.path.join(path, 'SectionPredict')
     predictCSVPath = os.path.join(os.path.dirname(path), 'PredictCSV')
+    predictPNGPath = os.path.join(os.path.dirname(path), 'PredictPNG')
     csvName = 'Predict_{}'.format(codeFileName)
+    pngName = 'Predict_{}.png'.format(codeFileName.split('.')[0])
 
     fileName = '{}.h5'.format(codeFileName.split('.')[0])
     appendFileName = "{}_win{}_sec{}.h5".format(codeFileName.split('.')[0], window_Size, sectionLength)
 
-    x_train0, y_train0, x_test0, y_test0 = LoadData(50, codeFileName)
+    x_test0, y_test0 = LoadTestData(100, 50, codeFileName)
 
     x_test = nanToZero(x_test0, True)
+    y_test = nanToZero(y_test0, False)
     pivotDatas0 = nanToZero(np.array(pivotDatas), False)
 
     model = load_model(os.path.join(onePath, fileName))
@@ -151,6 +154,7 @@ def MakeCSV(window_Size, codeFileName, sectionLength):
     register_matplotlib_converters()
 
     x_test2 = x_test[-(dateLength + 1):-1]
+    y_test2 = (y_test[-dateLength:].astype(np.float64) + 1) * pivotDatas[-dateLength:]
     append_x_test = x_test[-2:]
     pred = model.predict(x_test2)
     pred2 = append_model.predict(append_x_test)
@@ -161,6 +165,18 @@ def MakeCSV(window_Size, codeFileName, sectionLength):
 
     for pred2Data in pred2:
         result_predict.append(int((pred2Data + 1) * pivotDatas0[-1]))
+
+    plt.figure(facecolor = 'white')
+    plt.title(codeFileName.split('.')[0])
+    plt.plot(tmp[:-sectionLength], y_test2, label='actual')
+    plt.plot(tmp, result_predict, label='prediction', linestyle='--', marker='.')
+    plt.xticks(rotation = -45)
+    plt.legend()
+
+    if os.path.isdir(predictPNGPath) == False:
+        os.mkdir(predictPNGPath)
+
+    plt.savefig(os.path.join(predictPNGPath, PredictPNG), dpi=300)
 
     if os.path.isdir(predictCSVPath) == False:
         os.mkdir(predictCSVPath)

@@ -11,6 +11,11 @@ from tqdm import tqdm
 from keras.layers.core import Dense, Activation, Dropout
 from keras.layers.recurrent import LSTM
 from keras.models import Sequential
+
+# jupyter에서 쓸 때에는 주석 처리
+import matplotlib
+matplotlib.use('Agg')
+
 import matplotlib.pyplot as plt
 
 start = time.time()
@@ -119,6 +124,53 @@ def LoadData(window_Size, fileName):
     #print('{} LoadData time : {}'.format(fileName, str(timedelta(seconds = time.time() - start))))
 
     return [x_train, y_train, x_test, y_test]
+
+
+# 테스트 데이터 셋 만듬
+def LoadTestData(testlength, window_Size, fileName):
+    
+    start = time.time()
+
+    PriceChangeDirName = 'PriceChangedData'
+
+    path = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.dirname(path)
+
+    PriceChangePath = os.path.join(path, PriceChangeDirName)
+
+    result = []
+    # 리스트에 window_Size 동안의 데이터를 추가함
+    stockCode = fileName.split('.')[0]
+    data = pd.read_csv(os.path.join(PriceChangePath, fileName), \
+        dtype = {'날짜':np.int64, '종목코드':np.str, '종목명':np.str, \
+            '현재가':np.int64, '시가총액':np.int64, '외인순매수거래량':np.int64, \
+            '외인순매수거래대금':np.int64, '연기금순매수거래량':np.int64, '연기금순매수거래대금':np.int64})
+
+    data = data.loc[:, ['현재가', '외인순매수거래량', 
+        '외인순매수거래대금', '연기금순매수거래량', '연기금순매수거래대금']]
+    windowSize = window_Size + 1
+    
+    for index in range(len(data) - windowSize - testlength, len(data) - windowSize + 1):
+        stockData = data[index : index + windowSize].copy()
+        result.append(stockData)
+
+    stockData = data[-50:].copy()
+    stockData = Normalize([stockData])
+    result = Normalize(result)
+
+    # 너무 짧아서 정규화가 안된 경우
+    if (result.shape[0] == 0) == True:
+        print('Short!!!!! {} LoadData Finished'.format(fileName))
+        print('{} LoadData time : {}'.format(fileName, str(timedelta(seconds = time.time() - start))))
+        return [None, None, None, None]
+
+    x_test = result[:, :-1]
+    y_test = result[:, -1, 0]
+    x_test = np.append(x_test, stockData, axis = 0)
+    x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1], x_test.shape[2]))
+
+    return [x_test, y_test]
+
 
 # 학습 모델 생성
 def BuildModel():
