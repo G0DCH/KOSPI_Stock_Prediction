@@ -118,6 +118,7 @@ def MakeTable(tableType):
                 sql = 'DROP TABLE {}'.format(tableType)
                 cursor.execute(sql)
                 result = cursor.fetchall()
+                conn.commit()
 
             if tableType == NAME:
                 sql = 'CREATE TABLE {} (\
