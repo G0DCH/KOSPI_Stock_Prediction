@@ -206,7 +206,7 @@ def MakeCSV(window_Size, codeFileName, sectionLength):
     if os.path.isfile(csvFilePath) == True:
         data = pd.read_csv(csvFilePath, \
             dtype = {'종목코드':np.str, '날짜':np.int64, '예측가':np.int64})
-        data = data.loc[data['날짜'] <= dates[0]]
+        data = data.loc[data['날짜'] < dates[0]]
     
     data = data.append(predictData)
 
