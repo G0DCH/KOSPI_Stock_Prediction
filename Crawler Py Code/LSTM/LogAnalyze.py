@@ -109,3 +109,12 @@ sum_val_loss = round(sum_val_loss / stock_num, 6)
 
 sec_sum_loss = round(sec_sum_loss / stock_num, 6)
 sec_sum_val_loss = round(sec_sum_val_loss / stock_num, 6)
+
+import matplotlib.pyplot as plt
+
+plt.figure(facecolor = 'white')
+plt.hist(losses, range = (0, 0.1), edgecolor = 'black', bins = 100)
+plt.xlabel('MSE Value')
+plt.ylabel('Count')
+plt.title('One Day Predict (0 ~ 0.1)')
+plt.show()
