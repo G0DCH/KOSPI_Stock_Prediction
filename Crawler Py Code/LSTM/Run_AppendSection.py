@@ -154,7 +154,7 @@ def MakeCSV(window_Size, codeFileName, sectionLength):
     register_matplotlib_converters()
 
     x_test2 = x_test[-(dateLength + 1):-1]
-    y_test2 = (y_test[-dateLength:].astype(np.float64) + 1) * pivotDatas[-dateLength:]
+    y_test2 = (y_test[-dateLength:].astype(np.float64) + 1) * pivotDatas0[-(dateLength + 1): -1]
     append_x_test = x_test[-2:]
     pred = model.predict(x_test2)
     pred2 = append_model.predict(append_x_test)

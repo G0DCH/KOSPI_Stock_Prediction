@@ -156,9 +156,9 @@ def LoadTestData(testlength, window_Size, fileName):
         stockData = data[index : index + windowSize].copy()
         result.append(stockData)
 
+    result = Normalize(result)
     stockData = data[-50:].copy()
     stockData = Normalize([stockData])
-    result = Normalize(result)
 
     # 너무 짧아서 정규화가 안된 경우
     if (result.shape[0] == 0) == True:
