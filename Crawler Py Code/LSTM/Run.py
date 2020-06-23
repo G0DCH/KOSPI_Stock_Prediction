@@ -18,6 +18,8 @@ matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
 start = time.time()
 
 pivotDatas = []
