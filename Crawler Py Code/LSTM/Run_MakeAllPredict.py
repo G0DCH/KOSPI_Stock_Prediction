@@ -28,7 +28,7 @@ def MakeAllPredict(window_Size, sectionLength):
         dataFileName = code + '.csv'
         p = Process(target=MakeCSV, args=(window_Size, dataFileName, sectionLength))
         p.daemon = True
-        if len(processList) < 100:
+        if len(processList) < 50:
             p.start()
             processList.append(p)
             processArgNameList.append(dataFileName)
