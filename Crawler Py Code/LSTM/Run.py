@@ -20,11 +20,6 @@ import matplotlib.pyplot as plt
 
 start = time.time()
 
-#emptyFrame = pd.DataFrame(columns = ['종목코드', '현재가', '외인순매수거래량', 
-#                                    '외인순매수거래대금', '연기금순매수거래량', '연기금순매수거래대금'])
-emptyFrame = pd.DataFrame(columns = ['현재가', '외인순매수거래량', 
-                                    '외인순매수거래대금', '연기금순매수거래량', '연기금순매수거래대금'])
-
 pivotDatas = []
 
 def nanToZero(array, isTwo):
@@ -151,6 +146,11 @@ def LoadTestData(testlength, window_Size, fileName):
     data = data.loc[:, ['현재가', '외인순매수거래량', 
         '외인순매수거래대금', '연기금순매수거래량', '연기금순매수거래대금']]
     windowSize = window_Size + 1
+
+    if len(data) - windowSize - testlength < 0:
+        print('CSV is Short!!!!! {} LoadData Finished'.format(fileName))
+        print('{} LoadData time : {}'.format(fileName, str(timedelta(seconds = time.time() - start))))
+        return [None, None, None]
     
     for index in range(len(data) - windowSize - testlength, len(data) - windowSize + 1):
         stockData = data[index : index + windowSize].copy()
@@ -164,7 +164,7 @@ def LoadTestData(testlength, window_Size, fileName):
     if (result.shape[0] == 0) == True:
         print('Short!!!!! {} LoadData Finished'.format(fileName))
         print('{} LoadData time : {}'.format(fileName, str(timedelta(seconds = time.time() - start))))
-        return [None, None, None, None]
+        return [None, None, None]
 
     x_test = result[:, :-1]
     y_test = result[:, -1, 0]

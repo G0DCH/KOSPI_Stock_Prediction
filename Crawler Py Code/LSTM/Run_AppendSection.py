@@ -129,6 +129,10 @@ def MakeCSV(window_Size, codeFileName, sectionLength):
 
     x_test0, y_test0, stockName = LoadTestData(100, 50, codeFileName)
 
+    if type(x_test0) == type(None):
+        print('Data is too short.')
+        return
+
     x_test = nanToZero(x_test0, True)
     y_test = nanToZero(y_test0, False)
     pivotDatas0 = nanToZero(np.array(pivotDatas), False)
