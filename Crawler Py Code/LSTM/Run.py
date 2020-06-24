@@ -143,7 +143,7 @@ def LoadTestData(testlength, window_Size, fileName):
             '현재가':np.int64, '시가총액':np.int64, '외인순매수거래량':np.int64, \
             '외인순매수거래대금':np.int64, '연기금순매수거래량':np.int64, '연기금순매수거래대금':np.int64})
 
-    stockName = data['종목명'][0]
+    stockName = data['종목명'][len(data) - 1]
 
     data = data.loc[:, ['현재가', '외인순매수거래량', 
         '외인순매수거래대금', '연기금순매수거래량', '연기금순매수거래대금']]
