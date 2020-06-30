@@ -5,6 +5,8 @@ KOSPI_Stock_Prediction, https://github.com/llSourcell/How-to-Predict-Stock-Price
 http://kospiprediction.ml:5000/
 
 
+
+# 
 주가 예측 구독 웹사이트는 https://github.com/SuperNova911/Postman 에서 진행
 
 
