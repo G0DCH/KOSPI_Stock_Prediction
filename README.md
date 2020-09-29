@@ -4,6 +4,8 @@ KOSPI_Stock_Prediction, https://github.com/llSourcell/How-to-Predict-Stock-Price
 # 구독 웹사이트
 http://kospiprediction.ml:5000/
 
+현재 DB 서버 이용 기간이 끝나서 작동을 중단함.
+
 
 
 # 진행상황
